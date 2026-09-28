@@ -9,6 +9,12 @@ const ExplorePage = () => {
   const [filteredBooks, setFilteredBooks] = useState(mockBooks);
   const [filters, setFilters] = useState({ genres: [], rating: null, sortBy: 'rating' });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     let books = [...mockBooks];
@@ -50,8 +56,8 @@ const ExplorePage = () => {
   return (
     <PageContainer>
       <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">Explore Books</h1>
-        <p className="text-navy-600">Discover your next favorite read from our collection</p>
+        <h1 className="text-3xl font-serif font-bold text-ink mb-2">Explore Books</h1>
+        <p className="text-muted">Discover your next favorite read from our collection</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -61,20 +67,26 @@ const ExplorePage = () => {
 
         <button
           onClick={() => setShowMobileFilters(!showMobileFilters)}
-          className="lg:hidden flex items-center justify-center gap-2 bg-navy-800 text-white px-4 py-2.5 rounded-lg font-medium mb-4"
+          className="lg:hidden flex items-center justify-center gap-2 bg-primary text-on-primary px-5 py-2.5 rounded-full font-medium mb-4 active:scale-95 transition"
         >
           <FiFilter />
           Filters
         </button>
 
         {showMobileFilters && (
-          <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-            <div className="bg-white h-full w-80 p-6 overflow-y-auto">
+          <div
+            className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            onClick={() => setShowMobileFilters(false)}
+          >
+            <div
+              className="glass-strong h-full w-80 p-6 overflow-y-auto animate-pop"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-navy-900">Filters</h3>
+                <h3 className="font-semibold text-ink">Filters</h3>
                 <button
                   onClick={() => setShowMobileFilters(false)}
-                  className="text-navy-600 hover:text-navy-900"
+                  className="text-muted hover:text-ink"
                   aria-label="Close filters"
                 >
                   <FiX className="text-xl" />
@@ -86,10 +98,10 @@ const ExplorePage = () => {
         )}
 
         <div className="flex-1">
-          <div className="mb-4 text-sm text-navy-500">
+          <div className="mb-4 text-sm text-muted">
             Showing {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'}
           </div>
-          <BookGrid books={filteredBooks} />
+          <BookGrid books={filteredBooks} loading={loading} />
         </div>
       </div>
     </PageContainer>

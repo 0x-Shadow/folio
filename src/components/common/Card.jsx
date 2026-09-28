@@ -1,9 +1,11 @@
 const Card = ({ children, className = '', hover = false, onClick }) => {
-    const hoverEffect = hover ? 'hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer' : '';
+    const hoverEffect = hover
+      ? 'hover:-translate-y-1.5 hover:shadow-[var(--shadow-md)] cursor-pointer'
+      : 'shadow-[var(--shadow-sm)]';
 
     return (
       <div
-        className={`bg-white rounded-lg shadow-sm border border-cream-200 overflow-hidden ${hoverEffect} ${className}`}
+        className={`group bg-surface rounded-[20px] border border-line overflow-hidden transition-all duration-300 ${hoverEffect} ${className}`}
         onClick={onClick}
       >
         {children}

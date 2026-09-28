@@ -17,15 +17,15 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-3">
+          <h1 className="text-3xl font-serif font-bold text-ink mb-3">
             Something went wrong
           </h1>
-          <p className="text-navy-600 mb-8">
+          <p className="text-muted mb-8">
             This page hit a snag. Try going back home.
           </p>
           <Link
             to="/"
-            className="inline-block bg-navy-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-navy-900 transition"
+            className="inline-block bg-primary text-on-primary px-6 py-3 rounded-full font-medium hover:bg-primary-hover transition active:scale-95"
           >
             Back to home
           </Link>

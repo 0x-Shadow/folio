@@ -41,47 +41,61 @@ const OnboardingPage = () => {
   };
 
   return (
-    <PageContainer>
-      <div className="max-w-2xl mx-auto py-12">
-        <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2 text-center">
-          What do you love to read, {user.name.split(' ')[0]}?
-        </h1>
-        <p className="text-navy-600 text-center mb-8">
-          Pick at least 3 genres and we will stock your Want to Read shelf with top-rated picks.
-        </p>
+    <div className="relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="mesh-blob w-[460px] h-[460px] -top-32 right-[-80px]"
+          style={{ background: 'var(--mesh-1)' }}
+        />
+        <div
+          className="mesh-blob w-[420px] h-[420px] bottom-[-120px] left-[-100px]"
+          style={{ background: 'var(--mesh-2)', animationDelay: '-5s' }}
+        />
+      </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-cream-200 p-6 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {GENRES.map((genre) => (
-              <button
-                key={genre}
-                onClick={() => toggle(genre)}
-                aria-pressed={selected.includes(genre)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                  selected.includes(genre)
-                    ? 'bg-navy-800 text-white'
-                    : 'bg-cream-100 text-navy-700 hover:bg-cream-200'
-                }`}
-              >
-                {genre}
-              </button>
-            ))}
+      <PageContainer className="relative">
+        <div className="max-w-2xl mx-auto py-12 animate-page">
+          <h1 className="text-3xl font-serif font-bold text-ink mb-2 text-center">
+            What do you love to read, {user.name.split(' ')[0]}?
+          </h1>
+          <p className="text-muted text-center mb-8">
+            Pick at least 3 genres and we will stock your Want to Read shelf with top-rated picks.
+          </p>
+
+          <div className="glass-strong rounded-[28px] p-6 mb-6 shadow-[var(--shadow-lg)]">
+            <div className="flex flex-wrap gap-2">
+              {GENRES.map((genre, index) => (
+                <button
+                  key={genre}
+                  onClick={() => toggle(genre)}
+                  aria-pressed={selected.includes(genre)}
+                  style={{ animationDelay: `${index * 0.03}s` }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition animate-pop active:scale-95 ${
+                    selected.includes(genre)
+                      ? 'bg-primary text-on-primary shadow-[var(--shadow-sm)]'
+                      : 'bg-primary-soft text-muted hover:text-ink'
+                  }`}
+                >
+                  {genre}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Link
+              to="/"
+              className="text-sm font-medium text-muted hover:text-ink transition"
+            >
+              Skip for now
+            </Link>
+            <Button variant="primary" onClick={finish}>
+              Build my library ({selected.length})
+            </Button>
           </div>
         </div>
-
-        <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="text-sm font-medium text-navy-600 hover:text-navy-900 transition"
-          >
-            Skip for now
-          </Link>
-          <Button variant="primary" onClick={finish}>
-            Build my library ({selected.length})
-          </Button>
-        </div>
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </div>
   );
 };
 

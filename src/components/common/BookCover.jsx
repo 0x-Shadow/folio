@@ -9,13 +9,13 @@ const BookCover = ({ book, className = 'w-full h-72 object-cover' }) => {
   if (failed) {
     return (
       <div
-        className={`bg-navy-800 flex flex-col items-center justify-center gap-3 p-6 text-center ${className}`}
+        className={`bg-gradient-to-br from-primary via-navy-800 to-accent flex flex-col items-center justify-center gap-3 p-6 text-center ${className}`}
         role="img"
         aria-label={`Cover placeholder for ${book.title}`}
       >
-        <FiBook className="text-amber-400 text-4xl" />
+        <FiBook className="text-amber-300 text-4xl" />
         <p className="font-serif font-bold text-white line-clamp-3">{book.title}</p>
-        <p className="text-sm text-navy-300">{book.author}</p>
+        <p className="text-sm text-white/70">{book.author}</p>
       </div>
     );
   }

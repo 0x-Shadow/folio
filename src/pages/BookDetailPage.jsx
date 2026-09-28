@@ -29,9 +29,9 @@ const BookDetailPage = () => {
   if (!book) {
     return (
       <PageContainer>
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-serif font-bold text-navy-900 mb-2">Book Not Found</h2>
-          <p className="text-navy-600">The book you're looking for doesn't exist.</p>
+        <div className="glass-card text-center py-16 max-w-lg mx-auto">
+          <h2 className="text-2xl font-serif font-bold text-ink mb-2">Book Not Found</h2>
+          <p className="text-muted">The book you're looking for doesn't exist.</p>
         </div>
       </PageContainer>
     );
@@ -99,16 +99,30 @@ const BookDetailPage = () => {
     { stars: 1, count: 30, percentage: 2 },
   ];
 
+  const meta = [
+    { label: 'Pages', value: book.pages },
+    { label: 'Published', value: book.publishYear },
+    { label: 'Language', value: book.language },
+    { label: 'ISBN', value: book.isbn },
+  ];
+
   return (
     <div>
       <PageContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-14">
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <BookCover
-                book={book}
-                className="w-full rounded-lg shadow-lg mb-6 aspect-[3/4] object-cover"
-              />
+              <div className="relative mb-6">
+                <div
+                  className="absolute -inset-4 rounded-3xl blur-2xl opacity-40 -z-10"
+                  style={{ background: 'var(--mesh-1)' }}
+                  aria-hidden="true"
+                />
+                <BookCover
+                  book={book}
+                  className="w-full rounded-2xl shadow-[var(--shadow-lg)] aspect-[3/4] object-cover"
+                />
+              </div>
 
               <div className="space-y-3">
                 <Button
@@ -127,15 +141,17 @@ const BookDetailPage = () => {
                   >
                     Reading
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleAddToShelf('Read')}
-                  >
+                  <Button variant="outline" onClick={() => handleAddToShelf('Read')}>
                     Read
                   </Button>
                 </div>
 
-                <Button variant="ghost" className="w-full" onClick={handleShare} aria-label="Copy link to this book">
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={handleShare}
+                  aria-label="Copy link to this book"
+                >
                   <FiShare2 className="inline mr-2" />
                   Share
                 </Button>
@@ -144,12 +160,14 @@ const BookDetailPage = () => {
           </div>
 
           <div className="lg:col-span-2">
-            <h1 className="text-4xl font-serif font-bold text-navy-900 mb-2">{book.title}</h1>
-            <h2 className="text-xl text-navy-500 mb-4">by {book.author}</h2>
+            <h1 className="text-4xl font-serif font-bold text-ink mb-2 tracking-tight">
+              {book.title}
+            </h1>
+            <h2 className="text-xl text-muted mb-4">by {book.author}</h2>
 
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-4 mb-6">
               <Rating rating={book.rating} size="lg" />
-              <span className="text-navy-500">
+              <span className="text-muted">
                 {book.ratingsCount.toLocaleString()} ratings · {book.reviewsCount} reviews
               </span>
             </div>
@@ -162,47 +180,37 @@ const BookDetailPage = () => {
               ))}
             </div>
 
-            <div className="bg-cream-100 rounded-lg p-6 mb-6">
+            <div className="glass-card p-6 mb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Pages</p>
-                  <p className="font-semibold text-navy-900">{book.pages}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Published</p>
-                  <p className="font-semibold text-navy-900">{book.publishYear}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Language</p>
-                  <p className="font-semibold text-navy-900">{book.language}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">ISBN</p>
-                  <p className="font-semibold text-navy-900 text-xs">{book.isbn}</p>
-                </div>
+                {meta.map((item) => (
+                  <div key={item.label}>
+                    <p className="text-sm text-muted mb-1">{item.label}</p>
+                    <p className="font-semibold text-ink text-sm md:text-base">{item.value}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div className="mb-8">
-              <h3 className="text-xl font-serif font-bold text-navy-900 mb-4">About this book</h3>
-              <p className="text-navy-700 leading-relaxed">{book.description}</p>
+              <h3 className="text-xl font-serif font-bold text-ink mb-4">About this book</h3>
+              <p className="text-muted leading-relaxed">{book.description}</p>
             </div>
 
             <div className="mb-8">
-              <h3 className="text-xl font-serif font-bold text-navy-900 mb-4">Rating Distribution</h3>
+              <h3 className="text-xl font-serif font-bold text-ink mb-4">Rating Distribution</h3>
               <div className="space-y-2">
                 {ratingDistribution.map((item) => (
                   <div key={item.stars} className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-navy-700 w-16">
+                    <span className="text-sm font-medium text-muted w-16">
                       {item.stars} stars
                     </span>
-                    <div className="flex-1 bg-cream-200 rounded-full h-2.5">
+                    <div className="flex-1 bg-line rounded-full h-2.5 overflow-hidden">
                       <div
-                        className="bg-amber-500 h-2.5 rounded-full transition-all"
+                        className="bg-gradient-to-r from-accent to-accent-strong h-2.5 rounded-full transition-all duration-700"
                         style={{ width: `${item.percentage}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm text-navy-500 w-20 text-right">
+                    <span className="text-sm text-faint w-20 text-right">
                       {item.count} ({item.percentage}%)
                     </span>
                   </div>
@@ -213,27 +221,27 @@ const BookDetailPage = () => {
         </div>
 
         {relatedBooks.length > 0 && (
-          <div className="mb-12">
-            <h3 className="text-xl font-serif font-bold text-navy-900 mb-6">Readers Also Enjoyed</h3>
+          <div className="mb-14">
+            <h3 className="text-xl font-serif font-bold text-ink mb-6">Readers Also Enjoyed</h3>
             <BookGrid books={relatedBooks} />
           </div>
         )}
 
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-serif font-bold text-navy-900">
+            <h3 className="text-xl font-serif font-bold text-ink">
               Reviews ({reviews.length})
             </h3>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-cream-200 p-6 mb-6">
+          <div className="glass-card p-6 mb-6">
             {user ? (
               <form onSubmit={handleSubmitReview}>
-                <h4 className="font-semibold text-navy-900 mb-3">
+                <h4 className="font-semibold text-ink mb-3">
                   Share your take, {user.name.split(' ')[0]}
                 </h4>
                 <div className="mb-3">
-                  <span className="block text-sm font-medium text-navy-900 mb-1.5">
+                  <span className="block text-sm font-medium text-ink mb-1.5">
                     Your rating
                   </span>
                   <Rating
@@ -244,7 +252,10 @@ const BookDetailPage = () => {
                     onRate={setMyRating}
                   />
                 </div>
-                <label htmlFor="review-text" className="block text-sm font-medium text-navy-900 mb-1.5">
+                <label
+                  htmlFor="review-text"
+                  className="block text-sm font-medium text-ink mb-1.5"
+                >
                   Your review
                 </label>
                 <textarea
@@ -253,7 +264,7 @@ const BookDetailPage = () => {
                   onChange={(e) => setMyText(e.target.value)}
                   rows={4}
                   placeholder="What did you love? What fell flat? No spoilers, please."
-                  className="w-full px-4 py-2.5 bg-cream-50 border border-cream-200 rounded-lg text-sm text-navy-900 placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-500 mb-3"
+                  className="w-full px-4 py-3 bg-glass border border-line rounded-2xl text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-accent/60 mb-3 resize-y"
                 />
                 <Button type="submit" variant="primary">
                   Publish review
@@ -261,7 +272,7 @@ const BookDetailPage = () => {
               </form>
             ) : (
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-                <p className="text-navy-700">Sign in to write a review and build your library.</p>
+                <p className="text-muted">Sign in to write a review and build your library.</p>
                 <Button variant="primary" onClick={() => navigate('/signin')}>
                   Sign in
                 </Button>
@@ -269,15 +280,15 @@ const BookDetailPage = () => {
             )}
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 stagger">
             {reviews.length > 0 ? (
               reviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))
             ) : (
-              <div className="text-center py-12 bg-cream-100 rounded-lg">
-                <FiBook className="mx-auto text-4xl text-navy-400 mb-3" />
-                <p className="text-navy-600">No reviews yet. Be the first to review!</p>
+              <div className="glass-card text-center py-14">
+                <FiBook className="mx-auto text-4xl text-faint mb-3" />
+                <p className="text-muted">No reviews yet. Be the first to review!</p>
               </div>
             )}
           </div>

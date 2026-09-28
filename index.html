@@ -8,6 +8,16 @@
     <meta name="description" content="Folio is a sophisticated book review platform for discovering, reviewing, and organizing your reading journey." />
   </head>
   <body>
+    <script>
+      // Apply theme before first paint to avoid a flash of the wrong theme.
+      try {
+        var t = localStorage.getItem('folio_theme_v1');
+        t = t ? JSON.parse(t) : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

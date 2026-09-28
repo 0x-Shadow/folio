@@ -5,24 +5,24 @@ import Rating from '../common/Rating';
 
 const ReviewCard = ({ review }) => {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-cream-200">
+    <div className="glass-card p-6">
       <div className="flex items-start gap-4">
         <Avatar src={review.user.avatar} alt={review.user.name} size="lg" />
 
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h4 className="font-semibold text-navy-900">{review.user.name}</h4>
-              <p className="text-sm text-navy-400">@{review.user.username}</p>
+              <h4 className="font-semibold text-ink">{review.user.name}</h4>
+              <p className="text-sm text-faint">@{review.user.username}</p>
             </div>
             <Rating rating={review.rating} size="sm" showNumber={false} />
           </div>
 
-          <p className="text-navy-700 mb-3 leading-relaxed">{review.review}</p>
+          <p className="text-muted mb-3 leading-relaxed">{review.review}</p>
 
-          <div className="flex items-center gap-4 text-sm text-navy-400">
+          <div className="flex items-center gap-4 text-sm text-faint">
             <span>{formatDistanceToNow(new Date(review.date), { addSuffix: true })}</span>
-            <button className="flex items-center gap-1 hover:text-navy-700 transition">
+            <button className="flex items-center gap-1 hover:text-accent-strong dark:hover:text-accent transition">
               <FiThumbsUp className="text-sm" />
               <span>{review.likes}</span>
             </button>
