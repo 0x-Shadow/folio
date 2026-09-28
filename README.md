@@ -5,7 +5,7 @@
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://reactjs.org/)
 [![Vite 7](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vitejs.dev/)
 
-A sophisticated book review platform — search and filter a curated collection, rich detail pages with rating breakdowns, genre-based recommendations, and local-first personal bookshelves. Built with React 19, Vite 7, and Tailwind CSS 4.
+A sophisticated book review platform with SaaS-style accounts, taste onboarding, a personal reading dashboard, and smart recommendations — search and filter a curated collection, rich detail pages with rating breakdowns, and local-first bookshelves. Built with React 19, Vite 7, and Tailwind CSS 4.
 
 Live demo: https://0x-shadow.github.io/folio/
 
@@ -20,9 +20,11 @@ Live demo: https://0x-shadow.github.io/folio/
 
 | Path | What it is | Status |
 |------|------------|--------|
-| `src/pages/` | Pages: home, explore, search, detail, library | ✅ Develop here |
-| `src/components/` | Presentational UI: cards, grids, filters, layout, reviews | ✅ Develop here |
-| `src/data/` | Mock data: books, reviews, users, shelves | ✅ Develop here |
+| `src/pages/` | Pages: home, explore, search, detail, library, sign-in, onboarding, 404 | ✅ Develop here |
+| `src/components/` | Presentational UI: cards, grids, filters, layout, reviews, covers | ✅ Develop here |
+| `src/context/` + `src/hooks/` | Auth session provider + `useAuth` hook | ✅ Develop here |
+| `src/lib/` | Pure logic: safe storage, library store, review store, recommendation engine | ✅ Develop here |
+| `src/data/` | Mock catalogue data (books, reviews, shelves, genres) | ✅ Develop here |
 | `src/index.css` | Tailwind 4 + custom design tokens (navy / amber / cream) | ✅ Develop here |
 | `screenshots/` | README screenshots | ✅ Keep updated |
 
@@ -33,7 +35,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173.
+Open http://localhost:5173/folio/ (the app is served under the `/folio/` base path).
 
 ## Checks (also run in CI)
 
@@ -52,16 +54,19 @@ npm run deploy  # build + publish dist/ to gh-pages
 
 ## Configuration
 
-No secrets or environment variables needed — the app runs on local mock data in `src/data/`. To use your own catalogue, replace the mock modules with an API client and keep it as the single data-access layer.
+No secrets or environment variables needed. Accounts, shelves, reviews, and goals persist in the browser's `localStorage` (demo-grade auth — swap `src/context/` + `src/lib/` for a real API when adding a backend). To use your own catalogue, replace the mock modules in `src/data/` and keep them as the single data-access layer.
 
 ## Features
 
+- **Accounts** — sign up, sign in, guest mode, and sign out, all persisted locally
+- **Taste onboarding** — new readers pick genres to seed their Want to Read shelf
+- **Library dashboard** — books/pages/reviews stats plus an adjustable yearly reading goal
 - **Discover** — curated catalogue with genre and rating filters, five sort orders
 - **Search** — instant search across titles, authors, and genres
 - **Detail pages** — full descriptions, metadata, rating distribution, community reviews
-- **Recommendations** — genre-based *Readers Also Enjoyed* suggestions on every book
-- **Bookshelves** — *Read*, *Currently Reading* (with progress), and *Want to Read*, persisted per session
-- **Sophisticated literary UI** — deep navy + amber aesthetic, serif typography, mobile-first responsive
+- **Write reviews** — interactive star rating + validated review form, saved per account
+- **Recommendations** — engine scored from *your* shelves, on Home and every book page
+- **Resilient UI** — error boundary, 404 page, image fallbacks, skip link, labeled controls
 
 ## Contributing
 

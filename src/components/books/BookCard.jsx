@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FiBookmark } from 'react-icons/fi';
 import Card from '../common/Card';
+import BookCover from '../common/BookCover';
 import Rating from '../common/Rating';
 import Badge from '../common/Badge';
 
@@ -9,13 +10,9 @@ const BookCard = ({ book }) => {
     <Card hover={true}>
       <Link to={`/book/${book.id}`}>
         <div className="relative">
-          <img
-            src={book.cover}
-            alt={book.title}
-            className="w-full h-72 object-cover"
-          />
+          <BookCover book={book} />
           <div className="absolute top-3 right-3 bg-white rounded-full p-2.5 shadow-md hover:bg-cream-100 transition cursor-pointer">
-            <FiBookmark className="text-navy-700" />
+            <FiBookmark className="text-navy-700" aria-label={`Save ${book.title}`} />
           </div>
         </div>
 

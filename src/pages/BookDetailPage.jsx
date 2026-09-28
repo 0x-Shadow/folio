@@ -1,19 +1,30 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { FiBookmark, FiShare2, FiBook } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
 import Rating from '../components/common/Rating';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import BookCover from '../components/common/BookCover';
 import ReviewCard from '../components/reviews/ReviewCard';
 import BookGrid from '../components/books/BookGrid';
 import { mockBooks } from '../data/mockBooks';
-import { mockReviews } from '../data/mockReviews';
+import { getReviewsForBook, addReview } from '../lib/reviewStore';
+import { getShelves, addToShelf } from '../lib/library';
+import { recommendBooks } from '../lib/recommend';
+import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-toastify';
 
 const BookDetailPage = () => {
   const { id } = useParams();
-  const book = mockBooks.find(b => b.id === parseInt(id));
-  const bookReviews = mockReviews.filter(r => r.bookId === parseInt(id));
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const book = mockBooks.find((b) => b.id === parseInt(id));
+  const [reviews, setReviews] = useState(() =>
+    book ? getReviewsForBook(book.id) : []
+  );
+  const [myRating, setMyRating] = useState(0);
+  const [myText, setMyText] = useState('');
 
   if (!book) {
     return (
@@ -26,13 +37,59 @@ const BookDetailPage = () => {
     );
   }
 
+  const shelves = user ? getShelves(user.id) : [];
+  const relatedBooks = recommendBooks(mockBooks, shelves, { seedBook: book });
+
+  const requireAuth = () => {
+    if (!user) {
+      toast.info('Sign in to use your library.');
+      navigate('/signin');
+      return false;
+    }
+    return true;
+  };
+
   const handleAddToShelf = (shelf) => {
+    if (!requireAuth()) return;
+    addToShelf(user.id, book.id, shelf);
     toast.success(`Added to ${shelf}!`);
   };
 
-  const relatedBooks = mockBooks
-    .filter(b => b.id !== book.id && b.genre.some(g => book.genre.includes(g)))
-    .slice(0, 4);
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard!');
+    } catch {
+      toast.error('Could not copy the link.');
+    }
+  };
+
+  const handleSubmitReview = (e) => {
+    e.preventDefault();
+    if (!requireAuth()) return;
+    if (myRating === 0) {
+      toast.error('Please pick a star rating first.');
+      return;
+    }
+    if (myText.trim().length < 10) {
+      toast.error('Please write at least a sentence or two.');
+      return;
+    }
+    const created = addReview({
+      bookId: book.id,
+      user,
+      rating: myRating,
+      text: myText.trim(),
+    });
+    if (!created) {
+      toast.error('Could not save your review on this device.');
+      return;
+    }
+    setReviews(getReviewsForBook(book.id));
+    setMyRating(0);
+    setMyText('');
+    toast.success('Review published!');
+  };
 
   const ratingDistribution = [
     { stars: 5, count: 856, percentage: 56 },
@@ -48,10 +105,9 @@ const BookDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-12">
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="w-full rounded-lg shadow-lg mb-6"
+              <BookCover
+                book={book}
+                className="w-full rounded-lg shadow-lg mb-6 aspect-[3/4] object-cover"
               />
 
               <div className="space-y-3">
@@ -79,7 +135,7 @@ const BookDetailPage = () => {
                   </Button>
                 </div>
 
-                <Button variant="ghost" className="w-full">
+                <Button variant="ghost" className="w-full" onClick={handleShare} aria-label="Copy link to this book">
                   <FiShare2 className="inline mr-2" />
                   Share
                 </Button>
@@ -166,14 +222,56 @@ const BookDetailPage = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-serif font-bold text-navy-900">
-              Reviews ({bookReviews.length})
+              Reviews ({reviews.length})
             </h3>
-            <Button variant="primary">Write a Review</Button>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-cream-200 p-6 mb-6">
+            {user ? (
+              <form onSubmit={handleSubmitReview}>
+                <h4 className="font-semibold text-navy-900 mb-3">
+                  Share your take, {user.name.split(' ')[0]}
+                </h4>
+                <div className="mb-3">
+                  <span className="block text-sm font-medium text-navy-900 mb-1.5">
+                    Your rating
+                  </span>
+                  <Rating
+                    rating={myRating}
+                    size="lg"
+                    showNumber={false}
+                    interactive
+                    onRate={setMyRating}
+                  />
+                </div>
+                <label htmlFor="review-text" className="block text-sm font-medium text-navy-900 mb-1.5">
+                  Your review
+                </label>
+                <textarea
+                  id="review-text"
+                  value={myText}
+                  onChange={(e) => setMyText(e.target.value)}
+                  rows={4}
+                  placeholder="What did you love? What fell flat? No spoilers, please."
+                  className="w-full px-4 py-2.5 bg-cream-50 border border-cream-200 rounded-lg text-sm text-navy-900 placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-500 mb-3"
+                />
+                <Button type="submit" variant="primary">
+                  Publish review
+                </Button>
+              </form>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                <p className="text-navy-700">Sign in to write a review and build your library.</p>
+                <Button variant="primary" onClick={() => navigate('/signin')}>
+                  Sign in
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
-            {bookReviews.length > 0 ? (
-              bookReviews.map(review => (
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))
             ) : (

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
+import { GENRES } from '../../data/genres';
 import Badge from '../common/Badge';
 
 const FilterPanel = ({ onFilterChange }) => {
@@ -7,7 +8,7 @@ const FilterPanel = ({ onFilterChange }) => {
   const [selectedRating, setSelectedRating] = useState(null);
   const [sortBy, setSortBy] = useState('rating');
 
-  const genres = ['Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Thriller', 'Fantasy', 'Self-Help', 'Biography', 'Psychology', 'Business', 'Finance'];
+  const genres = GENRES;
   const ratings = [5, 4, 3, 2, 1];
   const sortOptions = [
     { value: 'rating', label: 'Highest Rated' },

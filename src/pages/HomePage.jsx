@@ -2,9 +2,15 @@ import { Link } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
 import { mockBooks } from '../data/mockBooks';
-import { FiArrowRight, FiTrendingUp, FiStar } from 'react-icons/fi';
+import { getShelves } from '../lib/library';
+import { recommendBooks } from '../lib/recommend';
+import { useAuth } from '../hooks/useAuth';
+import { FiArrowRight, FiTrendingUp, FiStar, FiCompass } from 'react-icons/fi';
 
 const HomePage = () => {
+  const { user } = useAuth();
+  const shelves = user ? getShelves(user.id) : [];
+  const recommended = user ? recommendBooks(mockBooks, shelves) : [];
   const featuredBooks = mockBooks.slice(0, 4);
   const trendingBooks = mockBooks.slice(2, 6);
   const topRated = [...mockBooks].sort((a, b) => b.rating - a.rating).slice(0, 4);
@@ -32,7 +38,24 @@ const HomePage = () => {
       </section>
 
       <PageContainer>
-        <section className="py-16">
+        {recommended.length > 0 && (
+          <section className="py-16">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <FiCompass className="text-amber-500 text-xl" />
+                <h2 className="text-2xl font-serif font-bold text-navy-900">
+                  Recommended for you, {user.name.split(' ')[0]}
+                </h2>
+              </div>
+              <Link to="/explore" className="text-sm font-medium text-navy-600 hover:text-navy-900 transition">
+                View all
+              </Link>
+            </div>
+            <BookGrid books={recommended} />
+          </section>
+        )}
+
+        <section className={`py-16 ${recommended.length > 0 ? 'border-t border-cream-200' : ''}`}>
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <FiStar className="text-amber-500 text-xl" />
