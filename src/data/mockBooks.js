@@ -120,6 +120,3 @@ export const mockBooks = [
       language: "English"
     }
   ];
-
-export const featuredBooks = mockBooks.slice(0, 4);
-export const trendingBooks = mockBooks.slice(2, 6);

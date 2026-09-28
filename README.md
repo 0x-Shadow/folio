@@ -36,12 +36,19 @@ Folio's interface borrows from print catalogues rather than app stores:
 
 | Path | What it is | Status |
 |------|------------|--------|
-| `src/pages/` | Front, catalogue, entry, shelf, search, sign-in, onboarding, 404 | ✅ Develop here |
-| `src/components/` | Covers, cards, rating, filters, reviews, layout | ✅ Develop here || `src/context/` + `src/hooks/` | Auth and theme providers, `useAuth` / `useTheme` | ✅ Develop here |
-| `src/lib/` | Safe storage, shelf store, review store, recommendation engine | ✅ Develop here |
-| `src/data/` | Catalogue data (books, reviews, shelves, genres) | ✅ Develop here |
+| `src/pages/` | One file per screen: front, catalogue, entry, shelf, search, sign-in, onboarding, 404 | ✅ Develop here |
+| `src/components/` | `layout/` (header, footer, page frame), `books/` (grid, card, filters), `reviews/`, `common/` (cover, rating, button, avatar, error boundary) | ✅ Develop here |
+| `src/context/` + `src/hooks/` | Auth and theme providers with their `useAuth` / `useTheme` hooks | ✅ Develop here |
+| `src/lib/` | Safe storage, shelf store, review store, recommendation engine, sorting | ✅ Develop here |
+| `src/data/` | Catalogue data: books, reviews, users, shelves, genres | ✅ Develop here |
 | `src/index.css` | Design tokens (paper / ink / cobalt), type scale, motion | ✅ Develop here |
 | `screenshots/` | README screenshots | ✅ Keep updated |
+
+**Conventions.** Components are `PascalCase.jsx`, everything else is `camelCase.js`.
+Each context is three files (`context/x.js` holds the context object, `context/XContext.jsx`
+the provider, `hooks/useX.js` the hook) because Vite's Fast Refresh lint rule requires
+providers and hooks to live apart. Screens read data from `src/lib/`, and `src/data/` is
+the only place raw data lives.
 
 ## Quickstart
 

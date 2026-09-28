@@ -5,14 +5,16 @@ import PageContainer from '../components/layout/PageContainer';
 import Button from '../components/common/Button';
 import { GENRES } from '../data/genres';
 import { mockBooks } from '../data/mockBooks';
+import { bookshelfTypes } from '../data/mockBookshelves';
 import { addToShelf } from '../lib/library';
+import { topBookPerGenre } from '../lib/sorting';
 import { useAuth } from '../hooks/useAuth';
 
 const MINIMUM = 3;
 
 const OnboardingPage = () => {
   const [selected, setSelected] = useState([]);
-  const { user } = useAuth();
+  const { user, firstName } = useAuth();
   const navigate = useNavigate();
 
   if (!user) return <Navigate to="/signin" replace />;
@@ -29,15 +31,8 @@ const OnboardingPage = () => {
       return;
     }
 
-    const taken = new Set();
-    selected.forEach((genre) => {
-      const pick = [...mockBooks]
-        .sort((a, b) => b.rating - a.rating)
-        .find((book) => book.genre.includes(genre) && !taken.has(book.id));
-      if (pick) {
-        taken.add(pick.id);
-        addToShelf(user.id, pick.id, 'want-to-read');
-      }
+    topBookPerGenre(mockBooks, selected).forEach((book) => {
+      addToShelf(user.id, book.id, bookshelfTypes.WANT_TO_READ);
     });
 
     toast.success('Your shelf is stocked.');
@@ -50,7 +45,7 @@ const OnboardingPage = () => {
         <header>
           <p className="label">Step one of one</p>
           <h1 className="display mt-4 text-[clamp(2rem,5vw,3rem)] text-ink">
-            What do you like reading, {user.name.split(' ')[0]}?
+            What do you like reading, {firstName}?
           </h1>
           <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-ink-2">
             Pick at least {MINIMUM} genres. We'll put the highest-rated title from each one on your

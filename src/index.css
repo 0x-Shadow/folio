@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
 /* ---------------------------------------------------------------------------
    Folio — an editorial reading catalogue.
    Paper + ink + International Klein Blue. Hairlines over shadows, square
    corners over pills, small-caps labels over badges.
+
+   Dark mode works by swapping the variables in the [data-theme="dark"] block
+   below — there is no `dark:` variant class anywhere in the app.
 --------------------------------------------------------------------------- */
 
 :root {
@@ -26,7 +27,6 @@
 
   --ink-block: #0a1730;
   --on-ink: #f2f4f7;
-  --on-ink-2: rgba(242, 244, 247, 0.66);
 
   --cover-shadow: 0 1px 1px rgba(10, 23, 48, 0.05), 0 16px 28px -22px rgba(10, 23, 48, 0.55);
   --cover-shadow-lift: 0 2px 2px rgba(10, 23, 48, 0.07), 0 30px 40px -24px rgba(10, 23, 48, 0.6);
@@ -52,7 +52,6 @@
 
   --ink-block: #edf0f6;
   --on-ink: #0a1730;
-  --on-ink-2: rgba(10, 23, 48, 0.66);
 
   --cover-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), 0 16px 28px -20px rgba(0, 0, 0, 0.9);
   --cover-shadow-lift: 0 2px 2px rgba(0, 0, 0, 0.55), 0 30px 40px -22px rgba(0, 0, 0, 0.95);
@@ -72,23 +71,8 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-on-accent: var(--on-accent);
-  --color-accent-soft: var(--accent-soft);
   --color-ink-block: var(--ink-block);
   --color-on-ink: var(--on-ink);
-  --color-on-ink-2: var(--on-ink-2);
-
-  /* legacy brand scales, still used by data-adjacent odds and ends */
-  --color-navy-50: #f0f4f8;
-  --color-navy-100: #d9e2ec;
-  --color-navy-500: #627d98;
-  --color-navy-700: #334e68;
-  --color-navy-800: #243b53;
-  --color-navy-900: #102a43;
-  --color-cream-50: #fefdfb;
-  --color-cream-100: #fdf9f3;
-  --color-cream-200: #f5efe6;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
 }
 
 /* ---------------------------------------------------------------- base --- */
@@ -231,8 +215,7 @@ a:hover .cover,
   color: var(--ink);
 }
 
-.chip[aria-pressed="true"],
-.chip[data-active="true"] {
+.chip[aria-pressed="true"] {
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);

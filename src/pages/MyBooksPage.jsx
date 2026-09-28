@@ -11,10 +11,10 @@ import { getReviewsByUser } from '../lib/reviewStore';
 import { useAuth } from '../hooks/useAuth';
 
 const MyBooksPage = () => {
-  const { user } = useAuth();
+  const { user, firstName } = useAuth();
   const [activeShelf, setActiveShelf] = useState('all');
-  // Goals live in localStorage, so nudge a render after each write.
-  const [goalTick, setGoalTick] = useState(0);
+  // Goals are saved in localStorage, so nudge a re-render after each write.
+  const [, setGoalTick] = useState(0);
 
   if (!user) {
     return (
@@ -47,11 +47,9 @@ const MyBooksPage = () => {
     { id: bookshelfTypes.WANT_TO_READ, name: 'Want to read', count: wantBooks.length },
   ];
 
+  // The books on the selected shelf, matched up with the catalogue.
   const visible = (activeShelf === 'all' ? shelves : onShelf(activeShelf))
-    .map((entry) => {
-      const book = mockBooks.find((b) => b.id === entry.bookId);
-      return book ? { ...book, shelfInfo: entry } : null;
-    })
+    .map((entry) => mockBooks.find((book) => book.id === entry.bookId))
     .filter(Boolean);
 
   const pagesRead = readBooks.reduce((sum, entry) => {
@@ -67,7 +65,6 @@ const MyBooksPage = () => {
     setGoal(user.id, Math.min(100, Math.max(1, goal + delta)));
     setGoalTick((tick) => tick + 1);
   };
-  void goalTick;
 
   const stats = [
     { value: readBooks.length, label: 'Books read' },
@@ -82,7 +79,7 @@ const MyBooksPage = () => {
         <div>
           <p className="label">Your shelf</p>
           <h1 className="display mt-4 text-[clamp(2.25rem,5vw,3.5rem)] text-ink">
-            {user.name.split(' ')[0]}&rsquo;s library
+            {firstName}&rsquo;s library
           </h1>
         </div>
         <Link
@@ -179,7 +176,7 @@ const MyBooksPage = () => {
 
       <div className="mt-10">
         {visible.length > 0 ? (
-          <BookGrid books={visible} count={8} />
+          <BookGrid books={visible} />
         ) : (
           <div className="border border-rule px-6 py-16 text-center">
             <p className="font-display text-xl text-ink">This shelf is empty.</p>

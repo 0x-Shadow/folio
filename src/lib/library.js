@@ -4,50 +4,40 @@ import { mockBookshelves } from '../data/mockBookshelves';
 const SHELVES_KEY = 'folio_shelves_v1';
 const GOALS_KEY = 'folio_goals_v1';
 
-export const DEFAULT_GOAL = 12;
+const DEFAULT_GOAL = 12;
 
-// First run for any account seeds the demo shelves so the app
-// is useful immediately. Afterwards everything the user does persists.
+// A brand-new account starts with a few books already shelved so the app is
+// useful immediately. Everything the reader does afterwards is saved.
 const seedShelves = () =>
-  mockBookshelves
-    .filter((entry) => entry.userId === 1)
-    .map(({ bookId, shelf, progress }) => ({
-      bookId,
-      shelf,
-      ...(progress ? { progress } : {}),
-      dateAdded: new Date().toISOString(),
-    }));
+  mockBookshelves.map(({ bookId, shelf }) => ({
+    bookId,
+    shelf,
+    dateAdded: new Date().toISOString(),
+  }));
 
 export const getShelves = (userId) => {
-  const all = read(SHELVES_KEY, {});
+  const allShelves = read(SHELVES_KEY, {});
   if (!userId) return [];
-  if (!all[userId]) {
-    all[userId] = seedShelves();
-    write(SHELVES_KEY, all);
+  if (!allShelves[userId]) {
+    allShelves[userId] = seedShelves();
+    write(SHELVES_KEY, allShelves);
   }
-  return all[userId];
+  return allShelves[userId];
 };
 
 export const addToShelf = (userId, bookId, shelf) => {
-  const all = read(SHELVES_KEY, {});
-  const mine = all[userId] ?? seedShelves();
+  const allShelves = read(SHELVES_KEY, {});
+  const mine = allShelves[userId] ?? seedShelves();
   const existing = mine.find((entry) => entry.bookId === bookId);
+
   if (existing) {
-    existing.shelf = shelf;
+    existing.shelf = shelf; // a book can only be on one shelf at a time
   } else {
     mine.push({ bookId, shelf, dateAdded: new Date().toISOString() });
   }
-  all[userId] = mine;
-  return write(SHELVES_KEY, all);
-};
 
-export const setProgress = (userId, bookId, progress) => {
-  const all = read(SHELVES_KEY, {});
-  const mine = all[userId] ?? [];
-  const entry = mine.find((e) => e.bookId === bookId);
-  if (entry) entry.progress = progress;
-  all[userId] = mine;
-  return write(SHELVES_KEY, all);
+  allShelves[userId] = mine;
+  return write(SHELVES_KEY, allShelves);
 };
 
 export const getGoal = (userId) => {

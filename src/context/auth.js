@@ -1,8 +1,6 @@
 import { createContext } from 'react';
 
-// Shared auth primitives. This module intentionally exports no
-// components so Fast Refresh rules stay happy — the provider lives
-// in AuthContext.jsx and the hook in hooks/useAuth.js.
+// The auth context object lives in its own file so this module exports no
+// components — that is what keeps Vite's Fast Refresh working.
+// The provider is in AuthContext.jsx, the hook in hooks/useAuth.js.
 export const AuthContext = createContext(null);
-
-export const GUEST_USER = { id: 'guest', name: 'Guest Reader', username: 'guest' };

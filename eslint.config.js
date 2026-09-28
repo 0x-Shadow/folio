@@ -23,6 +23,10 @@ export default defineConfig([
       },
     },
     rules: {
+      // The base rule cannot see JSX, so it reports every component that is
+      // only used in markup as unused. Ignoring capitalised names hides that
+      // noise — at the cost of also ignoring a genuinely unused component
+      // import, so check new imports by hand.
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },

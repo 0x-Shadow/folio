@@ -3,6 +3,7 @@ import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
 import FilterPanel from '../components/books/FilterPanel';
 import { mockBooks } from '../data/mockBooks';
+import { sortBooks } from '../lib/sorting';
 import { FiSliders, FiX } from 'react-icons/fi';
 
 const ExplorePage = () => {
@@ -12,7 +13,7 @@ const ExplorePage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    let result = [...mockBooks];
+    let result = mockBooks;
 
     if (filters.genres.length > 0) {
       result = result.filter((book) => book.genre.some((genre) => filters.genres.includes(genre)));
@@ -21,17 +22,11 @@ const ExplorePage = () => {
       result = result.filter((book) => book.rating >= filters.rating);
     }
 
-    const sorters = {
-      rating: (a, b) => b.rating - a.rating,
-      reviews: (a, b) => b.reviewsCount - a.reviewsCount,
-      title: (a, b) => a.title.localeCompare(b.title),
-      recent: (a, b) => b.publishYear - a.publishYear,
-    };
-    result.sort(sorters[filters.sortBy] ?? sorters.rating);
-
+    // Re-sorting on every filter change is also the loading state: a short
+    // pause keeps the grid from flashing between two results.
     setLoading(true);
     const timer = setTimeout(() => {
-      setBooks(result);
+      setBooks(sortBooks(result, filters.sortBy));
       setLoading(false);
     }, 260);
 

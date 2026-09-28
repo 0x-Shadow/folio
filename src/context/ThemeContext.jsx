@@ -2,12 +2,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { read, write } from '../lib/storage';
 import { ThemeContext, THEME_KEY, getSystemTheme } from './theme';
 
+// How long the cross-fade runs for. Must stay in step with the transition
+// lengths on `.theme-animating` in index.css.
+const CROSSFADE_MS = 500;
+
 const applyTheme = (theme, animate) => {
   const root = document.documentElement;
   root.setAttribute('data-theme', theme);
   if (animate) {
     root.classList.add('theme-animating');
-    window.setTimeout(() => root.classList.remove('theme-animating'), 500);
+    window.setTimeout(() => root.classList.remove('theme-animating'), CROSSFADE_MS);
   }
 };
 

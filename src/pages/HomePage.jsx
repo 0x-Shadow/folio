@@ -7,6 +7,7 @@ import Rating from '../components/common/Rating';
 import { mockBooks } from '../data/mockBooks';
 import { getShelves } from '../lib/library';
 import { recommendBooks } from '../lib/recommend';
+import { sortBooks } from '../lib/sorting';
 import { useAuth } from '../hooks/useAuth';
 
 const SectionHead = ({ title, note, to, count, linkLabel = 'View all' }) => (
@@ -27,7 +28,7 @@ const SectionHead = ({ title, note, to, count, linkLabel = 'View all' }) => (
 );
 
 const HomePage = () => {
-  const { user } = useAuth();
+  const { user, firstName } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,9 +39,9 @@ const HomePage = () => {
   const shelves = user ? getShelves(user.id) : [];
   const recommended = user ? recommendBooks(mockBooks, shelves) : [];
 
-  const topRated = [...mockBooks].sort((a, b) => b.rating - a.rating);
-  const mostReviewed = [...mockBooks].sort((a, b) => b.reviewsCount - a.reviewsCount);
-  const newest = [...mockBooks].sort((a, b) => b.publishYear - a.publishYear);
+  const topRated = sortBooks(mockBooks, 'rating');
+  const mostReviewed = sortBooks(mockBooks, 'reviews');
+  const newest = sortBooks(mockBooks, 'recent');
 
   const feature = topRated[0];
   const totalReviews = mockBooks.reduce((sum, book) => sum + book.reviewsCount, 0);
@@ -138,7 +139,7 @@ const HomePage = () => {
         {recommended.length > 0 && (
           <section className="pb-16">
             <SectionHead
-              title={`Recommended for ${user.name.split(' ')[0]}`}
+              title={`Recommended for ${firstName}`}
               note="Picked from the shelves you've filled in."
               to="/explore"
               count={recommended.length}

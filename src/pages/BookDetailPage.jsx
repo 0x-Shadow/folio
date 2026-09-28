@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 import { FiBookmark, FiShare2, FiArrowLeft } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
 import Rating from '../components/common/Rating';
-import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import BookCover from '../components/common/BookCover';
 import ReviewCard from '../components/reviews/ReviewCard';
 import BookGrid from '../components/books/BookGrid';
 import { mockBooks } from '../data/mockBooks';
+import { bookshelfTypes, bookshelfLabels } from '../data/mockBookshelves';
 import { getReviewsForBook, addReview } from '../lib/reviewStore';
 import { getShelves, addToShelf } from '../lib/library';
 import { recommendBooks } from '../lib/recommend';
@@ -18,7 +18,7 @@ import { useAuth } from '../hooks/useAuth';
 const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, firstName } = useAuth();
   const book = mockBooks.find((b) => b.id === parseInt(id, 10));
 
   const [reviews, setReviews] = useState(() => (book ? getReviewsForBook(book.id) : []));
@@ -55,7 +55,7 @@ const BookDetailPage = () => {
   const handleAddToShelf = (shelf) => {
     if (!requireAuth()) return;
     addToShelf(user.id, book.id, shelf);
-    toast.success(`Added to ${shelf}.`);
+    toast.success(`Added to ${bookshelfLabels[shelf].toLowerCase()}.`);
   };
 
   const handleShare = async () => {
@@ -123,15 +123,15 @@ const BookDetailPage = () => {
               <BookCover book={book} className="aspect-[3/4]" />
 
               <div className="mt-6 space-y-2.5">
-                <Button className="w-full" onClick={() => handleAddToShelf('Want to Read')}>
+                <Button className="w-full" onClick={() => handleAddToShelf(bookshelfTypes.WANT_TO_READ)}>
                   <FiBookmark size={14} />
                   Want to read
                 </Button>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <Button variant="outline" onClick={() => handleAddToShelf('Currently Reading')}>
+                  <Button variant="outline" onClick={() => handleAddToShelf(bookshelfTypes.READING)}>
                     Reading
                   </Button>
-                  <Button variant="outline" onClick={() => handleAddToShelf('Read')}>
+                  <Button variant="outline" onClick={() => handleAddToShelf(bookshelfTypes.READ)}>
                     Read
                   </Button>
                 </div>
@@ -224,7 +224,7 @@ const BookDetailPage = () => {
                 {user ? (
                   <form onSubmit={submitReview}>
                     <h3 className="font-display text-lg text-ink">
-                      Add yours, {user.name.split(' ')[0]}
+                      Add yours, {firstName}
                     </h3>
                     <div className="mt-4">
                       <span className="label block">Your rating</span>
