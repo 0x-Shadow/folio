@@ -20,7 +20,7 @@ const Avatar = ({ src, alt, size = 'md', className = '' }) => {
         <div
           role="img"
           aria-label={alt}
-          className={`rounded-full bg-gradient-to-br from-primary to-accent text-on-primary font-serif font-bold flex items-center justify-center border-2 border-line ${sizes[size]} ${className}`}
+          className={`rounded-full bg-navy-800 text-amber-400 font-serif font-bold flex items-center justify-center border-2 border-cream-200 ${sizes[size]} ${className}`}
         >
           {initials(alt)}
         </div>
@@ -31,7 +31,7 @@ const Avatar = ({ src, alt, size = 'md', className = '' }) => {
       <img
         src={src}
         alt={alt}
-        className={`rounded-full object-cover border-2 border-line ${sizes[size]} ${className}`}
+        className={`rounded-full object-cover border-2 border-cream-200 ${sizes[size]} ${className}`}
       />
     );
   };

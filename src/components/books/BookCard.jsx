@@ -9,24 +9,24 @@ const BookCard = ({ book }) => {
   return (
     <Card hover={true}>
       <Link to={`/book/${book.id}`}>
-        <div className="relative overflow-hidden">
-          <div className="transition-transform duration-500 group-hover:scale-105">
-            <BookCover book={book} className="w-full h-72 object-cover" />
-          </div>
-          <div className="absolute top-3 right-3 glass rounded-full p-2.5 shadow-[var(--shadow-sm)] hover:bg-accent-soft transition cursor-pointer">
-            <FiBookmark className="text-ink" aria-label={`Save ${book.title}`} />
+        <div className="relative">
+          <BookCover book={book} />
+          <div className="absolute top-3 right-3 bg-white rounded-full p-2.5 shadow-md hover:bg-cream-100 transition cursor-pointer">
+            <FiBookmark className="text-navy-700" aria-label={`Save ${book.title}`} />
           </div>
         </div>
 
         <div className="p-5">
-          <h3 className="font-serif font-bold text-lg text-ink line-clamp-2 mb-1">
+          <h3 className="font-serif font-bold text-lg text-navy-900 line-clamp-2 mb-1">
             {book.title}
           </h3>
-          <p className="text-sm text-muted mb-3">{book.author}</p>
+          <p className="text-sm text-navy-500 mb-3">{book.author}</p>
 
           <div className="flex items-center justify-between mb-3">
             <Rating rating={book.rating} size="sm" />
-            <span className="text-xs text-faint">{book.ratingsCount} ratings</span>
+            <span className="text-xs text-navy-400">
+              {book.ratingsCount} ratings
+            </span>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -37,9 +37,11 @@ const BookCard = ({ book }) => {
             ))}
           </div>
 
-          <p className="text-sm text-muted line-clamp-2 mb-3">{book.description}</p>
+          <p className="text-sm text-navy-600 line-clamp-2 mb-3">
+            {book.description}
+          </p>
 
-          <div className="flex items-center justify-between text-xs text-faint pt-3 border-t border-line">
+          <div className="flex items-center justify-between text-xs text-navy-400 pt-3 border-t border-cream-200">
             <span>{book.pages} pages</span>
             <span>{book.publishYear}</span>
           </div>

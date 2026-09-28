@@ -31,7 +31,7 @@ const Rating = ({ rating, maxRating = 5, showNumber = true, size = 'md', interac
         stars.push(
           <FiStar
             key={i}
-            className={`${sizes[size]} text-faint opacity-50 ${interactive ? 'cursor-pointer hover:scale-110 transition' : ''}`}
+            className={`${sizes[size]} text-navy-200 ${interactive ? 'cursor-pointer hover:scale-110 transition' : ''}`}
             onClick={() => interactive && onRate && onRate(i)}
           />
         );
@@ -44,7 +44,7 @@ const Rating = ({ rating, maxRating = 5, showNumber = true, size = 'md', interac
     <div className="flex items-center gap-1">
       {renderStars()}
       {showNumber && (
-        <span className={`ml-1 font-medium text-ink ${sizes[size]}`}>
+        <span className={`ml-1 font-medium text-navy-700 ${sizes[size]}`}>
           {rating.toFixed(1)}
         </span>
       )}

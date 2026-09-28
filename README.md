@@ -5,7 +5,7 @@
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://reactjs.org/)
 [![Vite 7](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vitejs.dev/)
 
-A sophisticated book review platform with SaaS-style accounts, taste onboarding, a personal reading dashboard, and smart recommendations — wrapped in an Apple-inspired interface: frosted-glass surfaces, ambient gradient hero, skeleton loaders, and a smooth light/dark appearance toggle. Built with React 19, Vite 7, and Tailwind CSS 4.
+A sophisticated book review platform with SaaS-style accounts, taste onboarding, a personal reading dashboard, and smart recommendations — search and filter a curated collection, rich detail pages with rating breakdowns, and local-first bookshelves. Built with React 19, Vite 7, and Tailwind CSS 4.
 
 Live demo: https://0x-shadow.github.io/folio/
 
@@ -15,13 +15,6 @@ Live demo: https://0x-shadow.github.io/folio/
 |------|---------|--------|---------|
 | ![Home](./screenshots/home.png) | ![Explore](./screenshots/explore.png) | ![Detail](./screenshots/book_detail.png) | ![Library](./screenshots/my_books.png) |
 | Home | Explore | Detail | Library |
-
-### Dark mode
-
-| Home | Explore |
-|------|---------|
-| ![Home dark](./screenshots/home_dark.png) | ![Explore dark](./screenshots/explore_dark.png) |
-| Home | Explore |
 
 ## What's inside
 
@@ -65,9 +58,6 @@ No secrets or environment variables needed. Accounts, shelves, reviews, and goal
 
 ## Features
 
-- **Light & dark appearance** — animated theme toggle with a timed cross-fade, persisted per device
-- **Frosted-glass UI** — translucent navbar, cards, and panels with backdrop blur and hairline borders
-- **Motion** — page transitions, staggered card entrances, top route progress bar, skeleton loaders (all respecting `prefers-reduced-motion`)
 - **Accounts** — sign up, sign in, guest mode, and sign out, all persisted locally
 - **Taste onboarding** — new readers pick genres to seed their Want to Read shelf
 - **Library dashboard** — books/pages/reviews stats plus an adjustable yearly reading goal

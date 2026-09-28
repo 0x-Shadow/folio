@@ -7,21 +7,20 @@ const Button = ({
     type = 'button',
     className = ''
   }) => {
-    const baseStyles =
-      'font-medium rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]';
+    const baseStyles = 'font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants = {
-      primary: 'bg-primary text-on-primary hover:bg-primary-hover shadow-[var(--shadow-sm)]',
-      secondary: 'bg-primary-soft text-ink hover:bg-accent-soft',
-      outline: 'border border-line-strong text-ink hover:bg-primary-soft',
-      ghost: 'text-muted hover:text-ink hover:bg-primary-soft',
-      danger: 'bg-red-600 text-white hover:bg-red-700'
+      primary: 'bg-navy-800 text-white hover:bg-navy-900 focus:ring-navy-500',
+      secondary: 'bg-cream-200 text-navy-800 hover:bg-cream-300 focus:ring-navy-500',
+      outline: 'border-2 border-navy-800 text-navy-800 hover:bg-navy-50 focus:ring-navy-500',
+      ghost: 'text-navy-700 hover:bg-navy-50 focus:ring-navy-500',
+      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
     };
 
     const sizes = {
-      sm: 'px-4 py-1.5 text-sm',
-      md: 'px-5 py-2 text-base',
-      lg: 'px-7 py-3 text-lg'
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg'
     };
 
     return (
