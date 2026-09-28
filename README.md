@@ -27,7 +27,7 @@ Live demo: https://0x-shadow.github.io/folio/
 
 Folio's interface borrows from print catalogues rather than app stores:
 
-- **Designed jackets, not stock photos** — every book gets a cover composed from a colour field, a motif (arch, orbit, horizon, grid, stripes, peak, waves, frame), a spine, an imprint mark, and its own type. Covers are deterministic per book, drawn locally as SVG, so they load instantly, never shuffle, and never break.
+- **Cover art with a designed fallback** — each book leads with its cover image, colour-graded as a set so a shelf reads as one catalogue. If an image can't load, the jacket is composed on the spot from a colour field, a motif (arch, orbit, horizon, grid, stripes, peak, waves, frame), a spine, an imprint mark, and the title set in Fraunces — so a shelf never shows a broken frame.
 - **Paper, ink, one blue** — three inks and a single accent (`#002FA7`) on cool paper, inverted to near-black ink for dark mode. Hairline rules divide space; shadows are reserved for the covers.
 - **Type** — [Fraunces](https://fonts.google.com/specimen/Fraunces) for display, [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans) for text, with letterspaced small-caps labels in the place of badges.
 - **Restrained motion** — page rise, a progress rule on navigation, covers lifting on hover, and a timed cross-fade when the appearance switches. Everything respects `prefers-reduced-motion`.

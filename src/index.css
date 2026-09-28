@@ -317,6 +317,50 @@ a:hover .cover,
   box-shadow: 0 18px 30px -20px rgba(10, 23, 48, 0.6);
 }
 
+/* Search field: quiet box, real clear button, no native webkit decoration. */
+.search-input {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 2.25rem;
+  width: 100%;
+  border: 1px solid var(--rule);
+  background: var(--raised);
+  padding: 0 2.25rem 0 2.25rem;
+  font-size: 13.5px;
+  color: var(--ink);
+  transition: border-color 0.2s ease, background-color 0.4s ease;
+}
+
+.search-input::placeholder {
+  color: var(--ink-3);
+}
+
+.search-input:hover {
+  border-color: var(--rule-strong);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
+
+/* Photographs share one treatment so a shelf reads as a set. */
+.cover-art {
+  filter: saturate(0.9) contrast(1.03);
+  transition: filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+a:hover .cover-art,
+.cover:hover .cover-art {
+  filter: saturate(1) contrast(1.03);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

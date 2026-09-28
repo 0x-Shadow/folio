@@ -1,7 +1,8 @@
-// Designed jackets. No stock photography: every book gets a cover composed
-// from a colour field, a motif, a spine, and its own type — so the shelf reads
-// as artwork, loads instantly, and never breaks.
+import { useState } from 'react';
 
+// Covers lead with the catalogue's own artwork, and fall back to a composed
+// jacket (colour field, motif, spine, imprint, type) if an image can't load —
+// so a shelf never shows a broken frame.
 const COVERS = [
   { bg: '#002FA7', fg: '#FFFFFF', motif: 'orbit' },
   { bg: '#0E3A5C', fg: '#F2F4F7', motif: 'arch' },
@@ -99,34 +100,19 @@ const Motif = ({ motif, fg }) => {
     default:
       return (
         <>
-          <rect
-            x="28"
-            y="38"
-            width="144"
-            height="128"
-            fill="none"
-            stroke={fg}
-            strokeOpacity="0.5"
-            strokeWidth="1.5"
-          />
-          <rect
-            x="46"
-            y="56"
-            width="108"
-            height="92"
-            fill="none"
-            stroke={fg}
-            strokeOpacity="0.75"
-            strokeWidth="1.5"
-          />
+          <rect x="28" y="38" width="144" height="128" fill="none" stroke={fg} strokeOpacity="0.5" strokeWidth="1.5" />
+          <rect x="46" y="56" width="108" height="92" fill="none" stroke={fg} strokeOpacity="0.75" strokeWidth="1.5" />
           <rect x="76" y="86" width="48" height="32" fill={fg} fillOpacity="0.92" />
         </>
       );
   }
 };
 
-const BookCover = ({ book, className = 'aspect-[2/3]' }) => {
+const BookCover = ({ book, className = 'aspect-[2/3]', priority = false }) => {
   const { bg, fg, motif } = paletteFor(book);
+  const [failed, setFailed] = useState(false);
+  const src = book.cover?.replace(/w=\d+/, 'w=600');
+  const showImage = Boolean(src) && !failed;
 
   return (
     <figure
@@ -135,42 +121,50 @@ const BookCover = ({ book, className = 'aspect-[2/3]' }) => {
       role="img"
       aria-label={`Cover of ${book.title} by ${book.author}`}
     >
-      <span
-        className="absolute inset-y-0 left-0 w-[7px]"
-        style={{ background: 'rgba(0,0,0,0.3)' }}
-        aria-hidden="true"
-      />
-
-      <svg
-        viewBox="0 0 200 300"
-        preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0 h-full w-full"
-        aria-hidden="true"
-      >
-        <Motif motif={motif} fg={fg} />
-      </svg>
-
-      {/* Scrim so the type stays legible over any motif. */}
-      <span
-        className="absolute inset-x-0 bottom-0 h-1/2"
-        style={{ background: `linear-gradient(to top, ${bg} 34%, transparent)` }}
-        aria-hidden="true"
-      />
-
-      <span className="absolute left-7 top-5 inline-flex items-center gap-2 text-[9px] font-medium uppercase tracking-[0.3em] opacity-45">
-        <span className="block h-[3px] w-[3px] bg-current" />
-        Folio
-      </span>
-
-      <div className="relative flex h-full flex-col justify-end p-5 pl-7">
-        <h3 className="font-display text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.1] tracking-[-0.01em] line-clamp-3">
-          {book.title}
-        </h3>
-        <span className="mt-3 block h-px w-9 bg-current opacity-45" aria-hidden="true" />
-        <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.18em] opacity-70 line-clamp-1">
-          {book.author}
-        </span>
-      </div>
+      {showImage ? (
+        <img
+          src={src}
+          alt=""
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          onError={() => setFailed(true)}
+          className="cover-art absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <>
+          <span
+            className="absolute inset-y-0 left-0 w-[7px]"
+            style={{ background: 'rgba(0,0,0,0.3)' }}
+            aria-hidden="true"
+          />
+          <svg
+            viewBox="0 0 200 300"
+            preserveAspectRatio="xMidYMid slice"
+            className="absolute inset-0 h-full w-full"
+            aria-hidden="true"
+          >
+            <Motif motif={motif} fg={fg} />
+          </svg>
+          <span
+            className="absolute inset-x-0 bottom-0 h-1/2"
+            style={{ background: `linear-gradient(to top, ${bg} 34%, transparent)` }}
+            aria-hidden="true"
+          />
+          <span className="absolute left-7 top-5 inline-flex items-center gap-2 text-[9px] font-medium uppercase tracking-[0.3em] opacity-45">
+            <span className="block h-[3px] w-[3px] bg-current" />
+            Folio
+          </span>
+          <div className="relative flex h-full flex-col justify-end p-5 pl-7">
+            <h3 className="font-display text-[clamp(1.05rem,1.5vw,1.4rem)] leading-[1.1] tracking-[-0.01em] line-clamp-3">
+              {book.title}
+            </h3>
+            <span className="mt-3 block h-px w-9 bg-current opacity-45" aria-hidden="true" />
+            <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.18em] opacity-70 line-clamp-1">
+              {book.author}
+            </span>
+          </div>
+        </>
+      )}
     </figure>
   );
 };

@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import {
-  FiSearch,
-  FiMenu,
-  FiX,
-  FiSun,
-  FiMoon,
-  FiLogIn,
-  FiLogOut,
-} from 'react-icons/fi';
+import { FiSearch, FiX, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -29,11 +21,11 @@ const Header = () => {
 
   const submitSearch = (event) => {
     event.preventDefault();
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-      setQuery('');
-      setMenuOpen(false);
-    }
+    const term = query.trim();
+    if (!term) return;
+    navigate(`/search?q=${encodeURIComponent(term)}`);
+    setQuery('');
+    setMenuOpen(false);
   };
 
   const handleSignOut = () => {
@@ -46,8 +38,9 @@ const Header = () => {
   const searchField = (
     <div className="relative w-full">
       <FiSearch
-        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-ink-2"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-3"
         size={14}
+        aria-hidden="true"
       />
       <input
         type="search"
@@ -55,16 +48,26 @@ const Header = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search title, author, genre"
         aria-label="Search the catalogue"
-        className="field pl-6"
+        className="search-input"
       />
+      {query && (
+        <button
+          type="button"
+          onClick={() => setQuery('')}
+          className="absolute right-2 top-1/2 grid h-5 w-5 -translate-y-1/2 place-items-center text-ink-3 transition-colors hover:text-ink"
+          aria-label="Clear search"
+        >
+          <FiX size={12} />
+        </button>
+      )}
     </div>
   );
 
   return (
     <header className="sticky top-0 z-50 border-b border-rule bg-paper/92 backdrop-blur-[6px] transition-colors duration-300">
       <div className="mx-auto max-w-[1400px] px-5 sm:px-8">
-        <div className="flex h-16 items-center gap-7">
-          <Link to="/" className="flex items-end gap-2.5" aria-label="Folio home">
+        <div className="flex h-16 items-center gap-8">
+          <Link to="/" className="flex shrink-0 items-end gap-2.5" aria-label="Folio home">
             <span className="mb-1 block h-5 w-[3px] bg-accent" aria-hidden="true" />
             <span className="font-display text-[22px] font-medium leading-none tracking-[-0.02em] text-ink">
               Folio
@@ -75,17 +78,8 @@ const Header = () => {
             {NAV_ITEMS.map((item) => {
               const active = location.pathname === item.to;
               return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="group relative py-2"
-                  aria-current={active ? 'page' : undefined}
-                >
-                  <span
-                    className={`label transition-colors duration-200 group-hover:text-ink ${
-                      active ? 'text-accent' : ''
-                    }`}
-                  >
+                <Link key={item.to} to={item.to} className="group relative py-2" aria-current={active ? 'page' : undefined}>
+                  <span className={`label transition-colors duration-200 group-hover:text-ink ${active ? 'text-accent' : ''}`}>
                     {item.label}
                   </span>
                   <span
@@ -99,54 +93,48 @@ const Header = () => {
             })}
           </nav>
 
-          <form onSubmit={submitSearch} className="ml-auto hidden w-64 lg:block">
+          <form onSubmit={submitSearch} role="search" className="ml-auto hidden w-64 lg:block">
             {searchField}
           </form>
 
-          <div className={`flex items-center gap-5 ${menuOpen ? 'ml-auto lg:ml-0' : 'ml-auto'}`}>
+          <div className="flex items-center gap-6">
             <button
               onClick={toggleTheme}
-              className="grid h-8 w-8 place-items-center border border-rule text-ink-2 transition-colors duration-200 hover:border-accent hover:text-accent"
+              className="grid h-9 w-9 place-items-center border border-rule text-ink-2 transition-colors duration-200 hover:border-accent hover:text-accent"
               aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}
               title="Switch appearance"
             >
-              {theme === 'dark' ? <FiMoon size={15} /> : <FiSun size={15} />}
+              {theme === 'dark' ? <FiMoon size={14} /> : <FiSun size={14} />}
             </button>
 
             {user ? (
-              <div className="flex items-center gap-3">
-                <span className="label hidden sm:block text-ink-2">{user.name}</span>
-                <button
-                  onClick={handleSignOut}
-                  className="grid h-8 w-8 place-items-center border border-rule text-ink-2 transition-colors duration-200 hover:border-accent hover:text-accent"
-                  aria-label="Sign out"
-                  title="Sign out"
-                >
-                  <FiLogOut size={14} />
+              <div className="hidden items-center gap-4 sm:flex">
+                <span className="label text-ink-2">{user.name}</span>
+                <button onClick={handleSignOut} className="label transition-colors duration-200 hover:text-accent">
+                  Sign out
                 </button>
               </div>
             ) : (
               <Link
                 to="/signin"
-                className="label hidden items-center gap-2 text-ink transition-colors duration-200 hover:text-accent sm:flex"
+                className="label hidden text-ink transition-colors duration-200 hover:text-accent sm:block"
               >
-                <FiLogIn size={14} />
                 Sign in
               </Link>
             )}
 
             <button
               onClick={() => setMenuOpen((open) => !open)}
-              className="grid h-8 w-8 place-items-center border border-rule text-ink md:hidden"
+              className="grid h-9 w-9 place-items-center border border-rule text-ink transition-colors hover:border-accent hover:text-accent md:hidden"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
             >
-              {menuOpen ? <FiX size={15} /> : <FiMenu size={15} />}
+              {menuOpen ? <FiX size={14} /> : <FiMenu size={14} />}
             </button>
           </div>
         </div>
 
-        <form onSubmit={submitSearch} className="pb-3 lg:hidden">
+        <form onSubmit={submitSearch} role="search" className="pb-3 lg:hidden">
           {searchField}
         </form>
       </div>
@@ -159,9 +147,7 @@ const Header = () => {
                 key={item.to}
                 to={item.to}
                 onClick={() => setMenuOpen(false)}
-                className={`label border-b border-rule py-3.5 ${
-                  location.pathname === item.to ? 'text-accent' : 'text-ink-2'
-                }`}
+                className={`label border-b border-rule py-3.5 ${location.pathname === item.to ? 'text-accent' : 'text-ink-2'}`}
               >
                 {item.label}
               </Link>
