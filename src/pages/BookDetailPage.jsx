@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { FiBookmark, FiShare2, FiBook } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
 import Rating from '../components/common/Rating';
@@ -15,7 +14,6 @@ const BookDetailPage = () => {
   const { id } = useParams();
   const book = mockBooks.find(b => b.id === parseInt(id));
   const bookReviews = mockReviews.filter(r => r.bookId === parseInt(id));
-  const [selectedShelf, setSelectedShelf] = useState(null);
 
   if (!book) {
     return (
@@ -29,7 +27,6 @@ const BookDetailPage = () => {
   }
 
   const handleAddToShelf = (shelf) => {
-    setSelectedShelf(shelf);
     toast.success(`Added to ${shelf}!`);
   };
 

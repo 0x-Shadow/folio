@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { FiFilter, FiX } from 'react-icons/fi';
+import { FiFilter } from 'react-icons/fi';
 import Badge from '../common/Badge';
 
-const FilterPanel = ({ onFilterChange, isMobile = false }) => {
+const FilterPanel = ({ onFilterChange }) => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedRating, setSelectedRating] = useState(null);
   const [sortBy, setSortBy] = useState('rating');

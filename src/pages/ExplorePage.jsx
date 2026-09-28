@@ -11,10 +11,6 @@ const ExplorePage = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
-    applyFilters();
-  }, [filters]);
-
-  const applyFilters = () => {
     let books = [...mockBooks];
 
     if (filters.genres.length > 0) {
@@ -45,7 +41,7 @@ const ExplorePage = () => {
     }
 
     setFilteredBooks(books);
-  };
+  }, [filters]);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
@@ -84,7 +80,7 @@ const ExplorePage = () => {
                   <FiX className="text-xl" />
                 </button>
               </div>
-              <FilterPanel onFilterChange={handleFilterChange} isMobile={true} />
+              <FilterPanel onFilterChange={handleFilterChange} />
             </div>
           </div>
         )}
