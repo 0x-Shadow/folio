@@ -344,6 +344,71 @@ a:hover .cover-art,
   filter: saturate(1) contrast(1.03);
 }
 
+/* --------------------------------------------------------------- print --- */
+/* A book page should print like a catalogue entry: no chrome, no dark ink,
+   and nothing broken across a page. */
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* The paper grain and every screen-only surface. */
+  body::after {
+    display: none !important;
+  }
+
+  /* Chrome and screen-only surfaces. The page wrapper is deliberately NOT
+     hidden — it holds the content. */
+  header,
+  footer,
+  nav,
+  .progress-rule,
+  .Toastify__toast {
+    display: none !important;
+  }
+
+  /* Entrance animations would otherwise leave content at opacity 0. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cover {
+    box-shadow: none !important;
+    border: 1px solid #bbb !important;
+    break-inside: avoid;
+  }
+
+  /* Keep a book and its details on one page. */
+  article,
+  figure,
+  section {
+    break-inside: avoid;
+  }
+
+  /* Buttons that act on the page are dead weight on paper. */
+  button,
+  [role='button'] {
+    display: none !important;
+  }
+
+  /* Show where a link points, since a printed page has no hover. */
+  main a[href^='/']::after {
+    content: '';
+  }
+
+  main a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    color: #555;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

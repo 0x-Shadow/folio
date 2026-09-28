@@ -15,8 +15,8 @@ const Placeholder = () => (
 const BookGrid = ({ books, loading = false, count }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {Array.from({ length: count ?? 10 }, (_, i) => (
+      <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: count ?? 8 }, (_, i) => (
           <Placeholder key={i} />
         ))}
       </div>
@@ -32,7 +32,7 @@ const BookGrid = ({ books, loading = false, count }) => {
   }
 
   return (
-    <div className="stagger grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="stagger grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
       {books.map((book) => (
         <BookCard key={book.id} book={book} />
       ))}
