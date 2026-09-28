@@ -27,7 +27,7 @@ Live demo: https://0x-shadow.github.io/folio/
 
 Folio's interface borrows from print catalogues rather than app stores:
 
-- **Typographic covers** — no stock photography. Every book gets a designed jacket (colour field, spine, serif title, printed grain) from a palette that includes International Klein Blue. Covers are deterministic, so they never shuffle or fail to load.
+- **Designed jackets, not stock photos** — every book gets a cover composed from a colour field, a motif (arch, orbit, horizon, grid, stripes, peak, waves, frame), a spine, an imprint mark, and its own type. Covers are deterministic per book, drawn locally as SVG, so they load instantly, never shuffle, and never break.
 - **Paper, ink, one blue** — three inks and a single accent (`#002FA7`) on cool paper, inverted to near-black ink for dark mode. Hairline rules divide space; shadows are reserved for the covers.
 - **Type** — [Fraunces](https://fonts.google.com/specimen/Fraunces) for display, [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans) for text, with letterspaced small-caps labels in the place of badges.
 - **Restrained motion** — page rise, a progress rule on navigation, covers lifting on hover, and a timed cross-fade when the appearance switches. Everything respects `prefers-reduced-motion`.
@@ -37,8 +37,7 @@ Folio's interface borrows from print catalogues rather than app stores:
 | Path | What it is | Status |
 |------|------------|--------|
 | `src/pages/` | Front, catalogue, entry, shelf, search, sign-in, onboarding, 404 | ✅ Develop here |
-| `src/components/` | Covers, cards, rating, filters, reviews, layout | ✅ Develop here |
-| `src/context/` + `src/hooks/` | Auth and theme providers, `useAuth` / `useTheme` | ✅ Develop here |
+| `src/components/` | Covers, cards, rating, filters, reviews, layout | ✅ Develop here || `src/context/` + `src/hooks/` | Auth and theme providers, `useAuth` / `useTheme` | ✅ Develop here |
 | `src/lib/` | Safe storage, shelf store, review store, recommendation engine | ✅ Develop here |
 | `src/data/` | Catalogue data (books, reviews, shelves, genres) | ✅ Develop here |
 | `src/index.css` | Design tokens (paper / ink / cobalt), type scale, motion | ✅ Develop here |

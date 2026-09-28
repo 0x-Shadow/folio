@@ -46,8 +46,8 @@ const Header = () => {
   const searchField = (
     <div className="relative w-full">
       <FiSearch
-        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-ink-3"
-        size={15}
+        className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-ink-2"
+        size={14}
       />
       <input
         type="search"

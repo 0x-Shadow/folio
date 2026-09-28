@@ -9,20 +9,20 @@ import { getShelves } from '../lib/library';
 import { recommendBooks } from '../lib/recommend';
 import { useAuth } from '../hooks/useAuth';
 
-const SectionHead = ({ title, note, to, linkLabel = 'View all' }) => (
-  <div className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-4">
+const SectionHead = ({ title, note, to, count, linkLabel = 'View all' }) => (
+  <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-rule pb-3.5">
     <div>
       <h2 className="font-display text-[26px] leading-tight text-ink">{title}</h2>
       {note && <p className="mt-1.5 text-[13px] text-ink-2">{note}</p>}
     </div>
-    {to && (
-      <Link
-        to={to}
-        className="label transition-colors duration-200 hover:text-accent"
-      >
-        {linkLabel} →
-      </Link>
-    )}
+    <div className="flex items-center gap-6">
+      {count != null && <span className="label tnum">{count} titles</span>}
+      {to && (
+        <Link to={to} className="label transition-colors duration-200 hover:text-accent">
+          {linkLabel} →
+        </Link>
+      )}
+    </div>
   </div>
 );
 
@@ -54,8 +54,7 @@ const HomePage = () => {
       <section className="border-b border-rule">
         <PageContainer className="pb-14 pt-16 sm:pt-20">
           <p className="label">
-            A catalogue of {mockBooks.length} titles · {totalReviews.toLocaleString()} reader
-            reviews
+            September 2026 · A catalogue of {mockBooks.length} titles
           </p>
 
           <h1 className="display mt-7 max-w-[15ch] text-[clamp(2.75rem,7vw,5.25rem)] text-ink">
@@ -142,6 +141,7 @@ const HomePage = () => {
               title={`Recommended for ${user.name.split(' ')[0]}`}
               note="Picked from the shelves you've filled in."
               to="/explore"
+              count={recommended.length}
             />
             <BookGrid books={recommended} loading={loading} count={5} />
           </section>
@@ -152,6 +152,7 @@ const HomePage = () => {
             title="Highest rated"
             note="What readers would defend in an argument."
             to="/explore?sort=rating"
+            count={5}
           />
           <BookGrid books={loading ? [] : topRated.slice(0, 5)} loading={loading} count={5} />
         </section>
@@ -161,12 +162,18 @@ const HomePage = () => {
             title="Most reviewed"
             note="The titles people had the most to say about."
             to="/explore?sort=reviews"
+            count={5}
           />
           <BookGrid books={mostReviewed.slice(0, 5)} />
         </section>
 
         <section className="pb-4">
-          <SectionHead title="Newest" note="Most recent additions to the shelf." to="/explore?sort=recent" />
+          <SectionHead
+            title="Newest"
+            note="Most recent additions to the shelf."
+            to="/explore?sort=recent"
+            count={5}
+          />
           <BookGrid books={newest.slice(0, 5)} />
         </section>
       </PageContainer>
