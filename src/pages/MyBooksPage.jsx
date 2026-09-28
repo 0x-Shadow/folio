@@ -24,7 +24,7 @@ const MyBooksPage = () => {
           <p className="label">Your shelf is empty</p>
           <h1 className="display mt-4 text-3xl text-ink">Sign in to start one.</h1>
           <p className="mt-4 text-[15px] leading-relaxed text-ink-2">
-            Track what you're reading, set a goal for the year, and keep your reviews in one
+            Track what you&rsquo;re reading, set a goal for the year, and keep your reviews in one
             place. Everything stays on this device.
           </p>
           <Link to="/signin" className="mt-8 inline-block">
@@ -190,7 +190,7 @@ const MyBooksPage = () => {
               </Link>
             }
           >
-            Nothing shelved here yet. Anything you add from a book's page lands on your shelf.
+            Nothing shelved here yet. Anything you add from a book&rsquo;s page lands on your shelf.
           </EmptyState>
         )}
       </div>

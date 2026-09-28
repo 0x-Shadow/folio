@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Folio</title>
+    <script>
+      /*
+        GitHub Pages serves this file for any address that has no file behind
+        it, which is what happens to a deep link like /folio/explore: the
+        server 404s before the app ever gets a chance to load.
+
+        So we bounce the reader to the app's own folder, remembering the page
+        they actually asked for. index.html reads that back and restores the
+        address before React starts, so the link works and refreshes work.
+
+        The app folder is the first part of the path, which is how the site is
+        published (see `base` in vite.config.js) — so nothing here is hardcoded.
+      */
+      (function () {
+        var path = window.location.pathname;
+        var folder = '/' + path.split('/')[1] + '/';
+
+        // Already at the app folder, so there is nothing to bounce to.
+        if (folder === path) return;
+
+        try {
+          window.sessionStorage.setItem('folio:redirect', path + window.location.search);
+        } catch (error) {
+          // Private browsing can refuse storage; the reader lands on the front
+          // page instead, which is a fine outcome.
+        }
+
+        window.location.replace(folder);
+      })();
+    </script>
+  </head>
+  <body>
+    <p style="font-family: system-ui, sans-serif; padding: 2rem">
+      Taking you to Folio&hellip;
+    </p>
+  </body>
+</html>

@@ -48,7 +48,7 @@ const OnboardingPage = () => {
             What do you like reading, {firstName}?
           </h1>
           <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-ink-2">
-            Pick at least {MINIMUM} genres. We'll put the highest-rated title from each one on your
+            Pick at least {MINIMUM} genres. We&rsquo;ll put the highest-rated title from each one on your
             Want to read shelf — you can clear it out later.
           </p>
         </header>

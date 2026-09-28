@@ -27,6 +27,20 @@
       } catch (e) {
         document.documentElement.setAttribute('data-theme', 'light');
       }
+
+      // GitHub Pages has no server rewrites, so a deep link such as
+      // /folio/explore 404s before this app loads. public/404.html catches
+      // that, sends the reader here, and leaves the address they wanted in
+      // sessionStorage. Put it back now, before React reads the URL.
+      try {
+        var intended = sessionStorage.getItem('folio:redirect');
+        if (intended) {
+          sessionStorage.removeItem('folio:redirect');
+          history.replaceState(null, '', intended);
+        }
+      } catch (e) {
+        // No session storage available; the app still starts normally.
+      }
     </script>
   </head>
   <body>

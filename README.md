@@ -66,6 +66,10 @@ npm run lint    # must be clean
 npm run build   # must build
 ```
 
+ESLint runs with `eslint-plugin-react`, so identifiers used only inside JSX are
+checked. A component referenced in markup but never imported is a lint error,
+not a blank page in production.
+
 ## Deployment
 
 The site is hosted on GitHub Pages:
@@ -73,6 +77,11 @@ The site is hosted on GitHub Pages:
 ```bash
 npm run deploy  # build + publish dist/ to gh-pages
 ```
+
+GitHub Pages has no server-side rewrites, so a deep link like `/folio/explore`
+would 404 before the app could load. `public/404.html` catches that, remembers
+the address the reader asked for, and `index.html` restores it before React
+starts — so shared links and refreshes work on every route.
 
 ## Features
 
