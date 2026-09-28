@@ -3,8 +3,8 @@ import PageContainer from '../components/layout/PageContainer';
 import Button from '../components/common/Button';
 
 const NotFoundPage = () => (
-  <PageContainer>
-    <div className="border-y border-rule py-24 text-center">
+  <PageContainer className="flex min-h-[78vh] items-center">
+    <div className="w-full border-y border-rule py-20 text-center">
       <p className="display text-[clamp(4rem,14vw,9rem)] leading-none text-rule-strong">404</p>
       <h1 className="display mt-6 text-[clamp(1.75rem,4vw,2.5rem)] text-ink">
         This page isn't in the catalogue.

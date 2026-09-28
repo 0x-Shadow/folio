@@ -1,4 +1,5 @@
 import BookCard from './BookCard';
+import EmptyState from '../common/EmptyState';
 
 const Placeholder = () => (
   <div>
@@ -24,10 +25,9 @@ const BookGrid = ({ books, loading = false, count }) => {
 
   if (!books || books.length === 0) {
     return (
-      <div className="border border-rule px-6 py-16 text-center">
-        <p className="font-display text-xl text-ink">Nothing here yet.</p>
-        <p className="mt-2 text-sm text-ink-2">Try a different filter or search term.</p>
-      </div>
+      <EmptyState title="Nothing here yet.">
+        Try a different filter, or browse the catalogue for something new.
+      </EmptyState>
     );
   }
 

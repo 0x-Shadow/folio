@@ -7,15 +7,16 @@ const COLUMNS = [
     links: [
       { label: 'All titles', to: '/explore' },
       { label: 'Highest rated', to: '/explore?sort=rating' },
-      { label: 'Recently added', to: '/explore?sort=recent' },
+      { label: 'Most reviewed', to: '/explore?sort=reviews' },
+      { label: 'Newest first', to: '/explore?sort=recent' },
     ],
   },
   {
-    title: 'Reading',
+    title: 'Your shelf',
     links: [
-      { label: 'My shelf', to: '/my-books' },
-      { label: 'Reading goal', to: '/my-books' },
-      { label: 'Write a review', to: '/my-books' },
+      { label: 'Books you have read', to: '/my-books' },
+      { label: 'This year’s goal', to: '/my-books' },
+      { label: 'Create an account', to: '/signin' },
     ],
   },
 ];

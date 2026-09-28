@@ -40,8 +40,8 @@ const OnboardingPage = () => {
   };
 
   return (
-    <PageContainer>
-      <div className="mx-auto max-w-2xl">
+    <PageContainer className="flex min-h-[78vh] items-center py-16">
+      <div className="mx-auto w-full max-w-2xl">
         <header>
           <p className="label">Step one of one</p>
           <h1 className="display mt-4 text-[clamp(2rem,5vw,3rem)] text-ink">
@@ -53,30 +53,34 @@ const OnboardingPage = () => {
           </p>
         </header>
 
-        <div className="mt-10 flex flex-wrap gap-2.5 border-y border-rule py-8">
-          {GENRES.map((genre) => (
-            <button
-              key={genre}
-              onClick={() => toggle(genre)}
-              aria-pressed={selected.includes(genre)}
-              className="chip"
-            >
-              {selected.includes(genre) && <span aria-hidden="true">✓</span>}
-              {genre}
-            </button>
-          ))}
+        <div className="mt-9 border border-rule bg-raised">
+          <div className="flex items-baseline justify-between gap-4 border-b border-rule px-6 py-4">
+            <h2 className="font-display text-lg text-ink">Genres</h2>
+            <p className="label tnum">
+              {selected.length} of {MINIMUM} needed
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2.5 p-6">
+            {GENRES.map((genre) => (
+              <button
+                key={genre}
+                onClick={() => toggle(genre)}
+                aria-pressed={selected.includes(genre)}
+                className="chip"
+              >
+                {selected.includes(genre) && <span aria-hidden="true">✓</span>}
+                {genre}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-          <p className="label tnum">
-            {selected.length} selected {selected.length < MINIMUM && `· ${MINIMUM - selected.length} more`}
-          </p>
-          <div className="flex items-center gap-6">
-            <Link to="/" className="label transition-colors hover:text-ink">
-              Skip
-            </Link>
-            <Button onClick={finish}>Build my shelf</Button>
-          </div>
+          <Link to="/" className="label transition-colors hover:text-ink">
+            Skip for now
+          </Link>
+          <Button onClick={finish}>Build my shelf</Button>
         </div>
       </div>
     </PageContainer>

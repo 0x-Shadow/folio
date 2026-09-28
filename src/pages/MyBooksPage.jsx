@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiTarget, FiMinus, FiPlus, FiArrowRight } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
+import EmptyState from '../components/common/EmptyState';
 import Button from '../components/common/Button';
 import { mockBooks } from '../data/mockBooks';
 import { bookshelfTypes } from '../data/mockBookshelves';
@@ -178,15 +179,19 @@ const MyBooksPage = () => {
         {visible.length > 0 ? (
           <BookGrid books={visible} />
         ) : (
-          <div className="border border-rule px-6 py-16 text-center">
-            <p className="font-display text-xl text-ink">This shelf is empty.</p>
-            <Link
-              to="/explore"
-              className="label mt-4 inline-block transition-colors hover:text-accent"
-            >
-              Find something to read →
-            </Link>
-          </div>
+          <EmptyState
+            title="This shelf is empty."
+            action={
+              <Link
+                to="/explore"
+                className="label transition-colors hover:text-accent"
+              >
+                Find something to read →
+              </Link>
+            }
+          >
+            Nothing shelved here yet. Anything you add from a book's page lands on your shelf.
+          </EmptyState>
         )}
       </div>
     </PageContainer>

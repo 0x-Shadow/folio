@@ -37,7 +37,7 @@ Folio's interface borrows from print catalogues rather than app stores:
 | Path | What it is | Status |
 |------|------------|--------|
 | `src/pages/` | One file per screen: front, catalogue, entry, shelf, search, sign-in, onboarding, 404 | ✅ Develop here |
-| `src/components/` | `layout/` (header, footer, page frame), `books/` (grid, card, filters), `reviews/`, `common/` (cover, rating, button, avatar, error boundary) | ✅ Develop here |
+| `src/components/` | `layout/` (header, footer, page frame), `books/` (grid, card, filters), `reviews/`, `common/` (cover, rating, button, avatar, empty state, error boundary) | ✅ Develop here |
 | `src/context/` + `src/hooks/` | Auth and theme providers with their `useAuth` / `useTheme` hooks | ✅ Develop here |
 | `src/lib/` | Safe storage, shelf store, review store, recommendation engine, sorting | ✅ Develop here |
 | `src/data/` | Catalogue data: books, reviews, users, shelves, genres | ✅ Develop here |

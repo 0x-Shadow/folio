@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
 import FilterPanel from '../components/books/FilterPanel';
@@ -7,7 +8,14 @@ import { sortBooks } from '../lib/sorting';
 import { FiSliders, FiX } from 'react-icons/fi';
 
 const ExplorePage = () => {
-  const [filters, setFilters] = useState({ genres: [], rating: null, sortBy: 'rating' });
+  const [params] = useSearchParams();
+  // Links from the home page and footer arrive with ?sort=…, so start on
+  // whatever they asked for and let the reader change it from there.
+  const [filters, setFilters] = useState(() => ({
+    genres: [],
+    rating: null,
+    sortBy: params.get('sort') ?? 'rating',
+  }));
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);

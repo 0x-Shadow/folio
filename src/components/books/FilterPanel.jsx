@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiX } from 'react-icons/fi';
+import { FiChevronDown } from 'react-icons/fi';
 import { GENRES } from '../../data/genres';
 
 const RATINGS = [5, 4, 3, 2, 1];
@@ -68,9 +68,9 @@ const FilterPanel = ({ onFilterChange }) => {
               </option>
             ))}
           </select>
-          <FiX
-            className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 -rotate-45 text-ink-3"
-            size={13}
+          <FiChevronDown
+            className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-ink-3"
+            size={14}
           />
         </div>
       </div>

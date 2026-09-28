@@ -1,7 +1,10 @@
 // The three looks a button can have. Anything bigger or bolder than this
 // would fight the rest of the page.
+//
+// Cobalt is reserved for state — active nav, selected chips, progress — so the
+// only filled button on a page is the primary action, and it is ink.
 const VARIANTS = {
-  primary: 'bg-accent text-on-accent hover:bg-accent-ink',
+  primary: 'bg-ink text-paper hover:bg-accent',
   outline: 'border border-rule-strong text-ink hover:border-ink',
 };
 

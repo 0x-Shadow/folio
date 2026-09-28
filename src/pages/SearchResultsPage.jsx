@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
+import EmptyState from '../components/common/EmptyState';
 import { mockBooks } from '../data/mockBooks';
 
 const SearchResultsPage = () => {
@@ -47,18 +48,9 @@ const SearchResultsPage = () => {
         <BookGrid books={results} loading={loading} count={6} />
       ) : (
         !loading && (
-          <div className="border border-rule px-6 py-16 text-center">
-            <p className="font-display text-xl text-ink">No match for “{query}”.</p>
-            <p className="mt-2 text-sm text-ink-2">
-              Try an author, a genre, or part of a title.
-            </p>
-            <Link
-              to="/explore"
-              className="label mt-6 inline-block transition-colors hover:text-accent"
-            >
-              Browse everything instead →
-            </Link>
-          </div>
+          <EmptyState title={`No match for “${query}”.`}>
+            Try an author, a genre, or part of a title.
+          </EmptyState>
         )
       )}
     </PageContainer>

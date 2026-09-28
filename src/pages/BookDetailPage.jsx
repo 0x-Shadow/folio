@@ -8,6 +8,7 @@ import Button from '../components/common/Button';
 import BookCover from '../components/common/BookCover';
 import ReviewCard from '../components/reviews/ReviewCard';
 import BookGrid from '../components/books/BookGrid';
+import EmptyState from '../components/common/EmptyState';
 import { mockBooks } from '../data/mockBooks';
 import { bookshelfTypes, bookshelfLabels } from '../data/mockBookshelves';
 import { getReviewsForBook, addReview } from '../lib/reviewStore';
@@ -28,14 +29,19 @@ const BookDetailPage = () => {
   if (!book) {
     return (
       <PageContainer>
-        <div className="border border-rule px-6 py-20 text-center">
-          <p className="label">404 — no such entry</p>
-          <h1 className="display mt-4 text-3xl text-ink">We don't stock that one.</h1>
-          <p className="mt-3 text-sm text-ink-2">The catalogue has moved on without it.</p>
-          <Link to="/explore" className="label mt-6 inline-block transition-colors hover:text-accent">
-            Browse the catalogue →
-          </Link>
-        </div>
+        <EmptyState
+          title="We don't stock that one."
+          action={
+            <Link
+              to="/explore"
+              className="label transition-colors hover:text-accent"
+            >
+              Browse the catalogue →
+            </Link>
+          }
+        >
+          The catalogue has moved on without it.
+        </EmptyState>
       </PageContainer>
     );
   }
@@ -270,10 +276,9 @@ const BookDetailPage = () => {
               {reviews.length > 0 ? (
                 reviews.map((review) => <ReviewCard key={review.id} review={review} />)
               ) : (
-                <div className="border-t border-rule pt-6">
-                  <p className="font-display text-xl text-ink">No reviews yet.</p>
-                  <p className="mt-2 text-sm text-ink-2">Be the first to put something on record.</p>
-                </div>
+                <EmptyState title="No reviews yet.">
+                  Be the first to put something on record.
+                </EmptyState>
               )}
             </div>
           </div>
