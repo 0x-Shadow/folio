@@ -1,23 +1,16 @@
-const Badge = ({ children, variant = 'default', size = 'md' }) => {
-    const variants = {
-      default: 'bg-cream-100 text-navy-700',
-      primary: 'bg-navy-100 text-navy-800',
-      success: 'bg-green-100 text-green-800',
-      warning: 'bg-amber-100 text-amber-800',
-      danger: 'bg-red-100 text-red-800',
-    };
+const VARIANTS = {
+  default: 'border border-rule text-ink-2',
+  accent: 'border border-accent text-accent bg-accent-soft',
+  quiet: 'border border-transparent text-ink-3',
+};
 
-    const sizes = {
-      sm: 'px-2 py-0.5 text-xs',
-      md: 'px-2.5 py-1 text-sm',
-      lg: 'px-3 py-1.5 text-base'
-    };
+// Printed tags, not chat bubbles: a hairline box, letterspaced, square.
+const Badge = ({ children, variant = 'default', className = '' }) => (
+  <span
+    className={`inline-flex items-center px-2 py-[3px] text-[10.5px] font-medium uppercase tracking-[0.14em] ${VARIANTS[variant]} ${className}`}
+  >
+    {children}
+  </span>
+);
 
-    return (
-      <span className={`inline-flex items-center rounded-full font-medium ${variants[variant]} ${sizes[size]}`}>
-        {children}
-      </span>
-    );
-  };
-
-  export default Badge;
+export default Badge;

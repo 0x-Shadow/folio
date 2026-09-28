@@ -5,27 +5,43 @@
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://reactjs.org/)
 [![Vite 7](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vitejs.dev/)
 
-A sophisticated book review platform with SaaS-style accounts, taste onboarding, a personal reading dashboard, and smart recommendations — search and filter a curated collection, rich detail pages with rating breakdowns, and local-first bookshelves. Built with React 19, Vite 7, and Tailwind CSS 4.
+A reading catalogue set in type. Folio is a book-review platform with local accounts, a personal shelf, a yearly reading goal, and recommendations drawn from what you've read — presented like a fine-press catalogue rather than a dashboard. React 19, Vite 7, Tailwind CSS 4.
 
 Live demo: https://0x-shadow.github.io/folio/
 
 ## Screenshots
 
-| Home | Explore | Detail | Library |
-|------|---------|--------|---------|
-| ![Home](./screenshots/home.png) | ![Explore](./screenshots/explore.png) | ![Detail](./screenshots/book_detail.png) | ![Library](./screenshots/my_books.png) |
-| Home | Explore | Detail | Library |
+| Front | Catalogue | Entry | Shelf |
+|-------|-----------|-------|-------|
+| ![Front](./screenshots/home.png) | ![Catalogue](./screenshots/explore.png) | ![Entry](./screenshots/book_detail.png) | ![Shelf](./screenshots/my_books.png) |
+| Home | Explore | Book detail | My shelf |
+
+### Dark
+
+| Front | Catalogue |
+|-------|-----------|
+| ![Front dark](./screenshots/home_dark.png) | ![Catalogue dark](./screenshots/explore_dark.png) |
+| Home | Explore |
+
+## The design
+
+Folio's interface borrows from print catalogues rather than app stores:
+
+- **Typographic covers** — no stock photography. Every book gets a designed jacket (colour field, spine, serif title, printed grain) from a palette that includes International Klein Blue. Covers are deterministic, so they never shuffle or fail to load.
+- **Paper, ink, one blue** — three inks and a single accent (`#002FA7`) on cool paper, inverted to near-black ink for dark mode. Hairline rules divide space; shadows are reserved for the covers.
+- **Type** — [Fraunces](https://fonts.google.com/specimen/Fraunces) for display, [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans) for text, with letterspaced small-caps labels in the place of badges.
+- **Restrained motion** — page rise, a progress rule on navigation, covers lifting on hover, and a timed cross-fade when the appearance switches. Everything respects `prefers-reduced-motion`.
 
 ## What's inside
 
 | Path | What it is | Status |
 |------|------------|--------|
-| `src/pages/` | Pages: home, explore, search, detail, library, sign-in, onboarding, 404 | ✅ Develop here |
-| `src/components/` | Presentational UI: cards, grids, filters, layout, reviews, covers | ✅ Develop here |
-| `src/context/` + `src/hooks/` | Auth session provider + `useAuth` hook | ✅ Develop here |
-| `src/lib/` | Pure logic: safe storage, library store, review store, recommendation engine | ✅ Develop here |
-| `src/data/` | Mock catalogue data (books, reviews, shelves, genres) | ✅ Develop here |
-| `src/index.css` | Tailwind 4 + custom design tokens (navy / amber / cream) | ✅ Develop here |
+| `src/pages/` | Front, catalogue, entry, shelf, search, sign-in, onboarding, 404 | ✅ Develop here |
+| `src/components/` | Covers, cards, rating, filters, reviews, layout | ✅ Develop here |
+| `src/context/` + `src/hooks/` | Auth and theme providers, `useAuth` / `useTheme` | ✅ Develop here |
+| `src/lib/` | Safe storage, shelf store, review store, recommendation engine | ✅ Develop here |
+| `src/data/` | Catalogue data (books, reviews, shelves, genres) | ✅ Develop here |
+| `src/index.css` | Design tokens (paper / ink / cobalt), type scale, motion | ✅ Develop here |
 | `screenshots/` | README screenshots | ✅ Keep updated |
 
 ## Quickstart
@@ -52,21 +68,22 @@ The site is hosted on GitHub Pages:
 npm run deploy  # build + publish dist/ to gh-pages
 ```
 
-## Configuration
-
-No secrets or environment variables needed. Accounts, shelves, reviews, and goals persist in the browser's `localStorage` (demo-grade auth — swap `src/context/` + `src/lib/` for a real API when adding a backend). To use your own catalogue, replace the mock modules in `src/data/` and keep them as the single data-access layer.
-
 ## Features
 
-- **Accounts** — sign up, sign in, guest mode, and sign out, all persisted locally
-- **Taste onboarding** — new readers pick genres to seed their Want to Read shelf
-- **Library dashboard** — books/pages/reviews stats plus an adjustable yearly reading goal
-- **Discover** — curated catalogue with genre and rating filters, five sort orders
-- **Search** — instant search across titles, authors, and genres
-- **Detail pages** — full descriptions, metadata, rating distribution, community reviews
-- **Write reviews** — interactive star rating + validated review form, saved per account
-- **Recommendations** — engine scored from *your* shelves, on Home and every book page
-- **Resilient UI** — error boundary, 404 page, image fallbacks, skip link, labeled controls
+- **Accounts** — sign up, sign in, or browse as a guest; everything is stored on the device
+- **Taste onboarding** — pick genres and the highest-rated title from each lands on your Want-to-read shelf
+- **Your shelf** — reading stats set as a table, plus an adjustable yearly goal with progress
+- **Catalogue** — genre and rating filters, four sort orders, and a mobile filter drawer
+- **Search** — instant matching across titles, authors, and genres
+- **Entry pages** — metadata table, rating distribution, shelf actions, and the review column
+- **Reviews** — star rating with validation, saved per account
+- **Recommendations** — scored from your shelves, on the front page and every entry
+- **Appearance** — light and dark, persisted, following the system by default
+- **Resilience** — error boundary, 404, skip link, and labelled controls
+
+## Configuration
+
+No secrets or environment variables. Auth, shelves, goals, and reviews live in `localStorage` (demo-grade by design — swap `src/context/` and `src/lib/` for a real API). Replace the modules in `src/data/` to change the catalogue; they are the only data-access layer.
 
 ## Contributing
 

@@ -1,44 +1,329 @@
 @import "tailwindcss";
 
-@theme {
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------------------------------------------------------------------------
+   Folio — an editorial reading catalogue.
+   Paper + ink + International Klein Blue. Hairlines over shadows, square
+   corners over pills, small-caps labels over badges.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --paper: #f2f4f7;
+  --raised: #ffffff;
+  --ink: #0a1730;
+  --ink-2: #4a5670;
+  --ink-3: #838d9f;
+  --rule: rgba(10, 23, 48, 0.13);
+  --rule-strong: rgba(10, 23, 48, 0.3);
+
+  --accent: #002fa7;
+  --accent-ink: #001f6e;
+  --on-accent: #ffffff;
+  --accent-soft: rgba(0, 47, 167, 0.08);
+
+  --ink-block: #0a1730;
+  --on-ink: #f2f4f7;
+  --on-ink-2: rgba(242, 244, 247, 0.66);
+
+  --cover-shadow: 0 1px 1px rgba(10, 23, 48, 0.05), 0 16px 28px -22px rgba(10, 23, 48, 0.55);
+  --cover-shadow-lift: 0 2px 2px rgba(10, 23, 48, 0.07), 0 30px 40px -24px rgba(10, 23, 48, 0.6);
+
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #070b16;
+  --raised: #0d1424;
+  --ink: #edf0f6;
+  --ink-2: #99a3b6;
+  --ink-3: #6b7486;
+  --rule: rgba(237, 240, 246, 0.14);
+  --rule-strong: rgba(237, 240, 246, 0.32);
+
+  --accent: #7c9bff;
+  --accent-ink: #a3b8ff;
+  --on-accent: #050a16;
+  --accent-soft: rgba(124, 155, 255, 0.14);
+
+  --ink-block: #edf0f6;
+  --on-ink: #0a1730;
+  --on-ink-2: rgba(10, 23, 48, 0.66);
+
+  --cover-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), 0 16px 28px -20px rgba(0, 0, 0, 0.9);
+  --cover-shadow-lift: 0 2px 2px rgba(0, 0, 0, 0.55), 0 30px 40px -22px rgba(0, 0, 0, 0.95);
+}
+
+@theme inline {
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --color-paper: var(--paper);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-ink-block: var(--ink-block);
+  --color-on-ink: var(--on-ink);
+  --color-on-ink-2: var(--on-ink-2);
+
+  /* legacy brand scales, still used by data-adjacent odds and ends */
   --color-navy-50: #f0f4f8;
   --color-navy-100: #d9e2ec;
-  --color-navy-200: #bcccdc;
-  --color-navy-300: #9fb3c8;
-  --color-navy-400: #829ab1;
   --color-navy-500: #627d98;
-  --color-navy-600: #486581;
   --color-navy-700: #334e68;
   --color-navy-800: #243b53;
   --color-navy-900: #102a43;
-  --color-navy-950: #0a1929;
-
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-200: #fde68a;
-  --color-amber-300: #fcd34d;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
-  --color-amber-800: #92400e;
-  --color-amber-900: #78350f;
-
   --color-cream-50: #fefdfb;
   --color-cream-100: #fdf9f3;
   --color-cream-200: #f5efe6;
-  --color-cream-300: #e8dfd2;
-  --color-cream-400: #d4c9b8;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+}
 
-  --font-serif: 'Georgia', 'Times New Roman', serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+/* ---------------------------------------------------------------- base --- */
+
+html {
+  background-color: var(--paper);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-cream-50);
-  color: var(--color-navy-900);
+  background-color: var(--paper);
+  color: var(--ink);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Paper grain over the whole page — printed, not plastic. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: 0.022;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Theme cross-fade, armed only while switching. */
+.theme-animating *,
+.theme-animating *::before,
+.theme-animating *::after {
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease,
+    box-shadow 0.4s ease, fill 0.3s ease !important;
+}
+
+/* ----------------------------------------------------------- typography --- */
+
+.label {
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------- covers --- */
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  box-shadow: var(--cover-shadow);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+a:hover .cover,
+.cover:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--cover-shadow-lift);
+}
+
+/* ------------------------------------------------------------- controls --- */
+
+.field {
+  width: 100%;
+  background: transparent;
+  border-bottom: 1px solid var(--rule-strong);
+  padding: 0.6rem 0.25rem;
+  color: var(--ink);
+  font-size: 15px;
+  transition: border-color 0.25s ease;
+}
+
+.field::placeholder {
+  color: var(--ink-3);
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Square chip with a cobalt state. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--rule);
+  padding: 0.4rem 0.75rem;
+  font-size: 13px;
+  color: var(--ink-2);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.chip:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.chip[aria-pressed="true"],
+.chip[data-active="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------- motion ----- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes progressRule {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  75% {
+    transform: scaleX(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.rise {
+  animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger > * {
+  animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger > *:nth-child(5) { animation-delay: 0.2s; }
+.stagger > *:nth-child(6) { animation-delay: 0.24s; }
+.stagger > *:nth-child(7) { animation-delay: 0.28s; }
+.stagger > *:nth-child(8) { animation-delay: 0.32s; }
+.stagger > *:nth-child(n + 9) { animation-delay: 0.36s; }
+
+.progress-rule {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 60;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: progressRule 0.75s cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.placeholder-block {
+  background: var(--rule);
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------- toast --- */
+
+.Toastify__toast {
+  font-family: var(--font-sans);
+  border-radius: 2px;
+  box-shadow: 0 18px 30px -20px rgba(10, 23, 48, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

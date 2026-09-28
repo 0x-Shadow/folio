@@ -1,6 +1,7 @@
-import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { FiBookmark, FiShare2, FiBook } from 'react-icons/fi';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { FiBookmark, FiShare2, FiArrowLeft } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
 import Rating from '../components/common/Rating';
 import Badge from '../components/common/Badge';
@@ -13,36 +14,38 @@ import { getReviewsForBook, addReview } from '../lib/reviewStore';
 import { getShelves, addToShelf } from '../lib/library';
 import { recommendBooks } from '../lib/recommend';
 import { useAuth } from '../hooks/useAuth';
-import { toast } from 'react-toastify';
 
 const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const book = mockBooks.find((b) => b.id === parseInt(id));
-  const [reviews, setReviews] = useState(() =>
-    book ? getReviewsForBook(book.id) : []
-  );
+  const book = mockBooks.find((b) => b.id === parseInt(id, 10));
+
+  const [reviews, setReviews] = useState(() => (book ? getReviewsForBook(book.id) : []));
   const [myRating, setMyRating] = useState(0);
   const [myText, setMyText] = useState('');
 
   if (!book) {
     return (
       <PageContainer>
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-serif font-bold text-navy-900 mb-2">Book Not Found</h2>
-          <p className="text-navy-600">The book you're looking for doesn't exist.</p>
+        <div className="border border-rule px-6 py-20 text-center">
+          <p className="label">404 — no such entry</p>
+          <h1 className="display mt-4 text-3xl text-ink">We don't stock that one.</h1>
+          <p className="mt-3 text-sm text-ink-2">The catalogue has moved on without it.</p>
+          <Link to="/explore" className="label mt-6 inline-block transition-colors hover:text-accent">
+            Browse the catalogue →
+          </Link>
         </div>
       </PageContainer>
     );
   }
 
   const shelves = user ? getShelves(user.id) : [];
-  const relatedBooks = recommendBooks(mockBooks, shelves, { seedBook: book });
+  const related = recommendBooks(mockBooks, shelves, { seedBook: book });
 
   const requireAuth = () => {
     if (!user) {
-      toast.info('Sign in to use your library.');
+      toast.info('Sign in to use your shelf.');
       navigate('/signin');
       return false;
     }
@@ -52,35 +55,30 @@ const BookDetailPage = () => {
   const handleAddToShelf = (shelf) => {
     if (!requireAuth()) return;
     addToShelf(user.id, book.id, shelf);
-    toast.success(`Added to ${shelf}!`);
+    toast.success(`Added to ${shelf}.`);
   };
 
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard!');
+      toast.success('Link copied.');
     } catch {
       toast.error('Could not copy the link.');
     }
   };
 
-  const handleSubmitReview = (e) => {
-    e.preventDefault();
+  const submitReview = (event) => {
+    event.preventDefault();
     if (!requireAuth()) return;
     if (myRating === 0) {
-      toast.error('Please pick a star rating first.');
+      toast.error('Pick a star rating first.');
       return;
     }
     if (myText.trim().length < 10) {
-      toast.error('Please write at least a sentence or two.');
+      toast.error('Write at least a sentence or two.');
       return;
     }
-    const created = addReview({
-      bookId: book.id,
-      user,
-      rating: myRating,
-      text: myText.trim(),
-    });
+    const created = addReview({ bookId: book.id, user, rating: myRating, text: myText.trim() });
     if (!created) {
       toast.error('Could not save your review on this device.');
       return;
@@ -88,122 +86,113 @@ const BookDetailPage = () => {
     setReviews(getReviewsForBook(book.id));
     setMyRating(0);
     setMyText('');
-    toast.success('Review published!');
+    toast.success('Review published.');
   };
 
-  const ratingDistribution = [
-    { stars: 5, count: 856, percentage: 56 },
-    { stars: 4, count: 425, percentage: 28 },
-    { stars: 3, count: 167, percentage: 11 },
-    { stars: 2, count: 45, percentage: 3 },
-    { stars: 1, count: 30, percentage: 2 },
+  const totalRatings = book.ratingsCount;
+  const distribution = [5, 4, 3, 2, 1].map((stars) => {
+    const weight = { 5: 0.52, 4: 0.27, 3: 0.12, 2: 0.05, 1: 0.04 }[stars];
+    return {
+      stars,
+      count: Math.round(totalRatings * weight),
+      percentage: Math.round(weight * 100),
+    };
+  });
+
+  const meta = [
+    { label: 'Pages', value: book.pages },
+    { label: 'Published', value: book.publishYear },
+    { label: 'Language', value: book.language },
+    { label: 'ISBN', value: book.isbn },
   ];
 
   return (
     <div>
       <PageContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-12">
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
-              <BookCover
-                book={book}
-                className="w-full rounded-lg shadow-lg mb-6 aspect-[3/4] object-cover"
-              />
+        <button
+          onClick={() => navigate(-1)}
+          className="label mb-10 inline-flex items-center gap-2 transition-colors hover:text-accent"
+        >
+          <FiArrowLeft size={13} />
+          Back
+        </button>
 
-              <div className="space-y-3">
-                <Button
-                  variant="primary"
-                  className="w-full"
-                  onClick={() => handleAddToShelf('Want to Read')}
-                >
-                  <FiBookmark className="inline mr-2" />
-                  Want to Read
+        <div className="grid gap-12 md:grid-cols-[minmax(0,320px)_1fr] md:gap-16 lg:gap-24">
+          <div>
+            <div className="md:sticky md:top-24">
+              <BookCover book={book} className="aspect-[3/4]" />
+
+              <div className="mt-6 space-y-2.5">
+                <Button className="w-full" onClick={() => handleAddToShelf('Want to Read')}>
+                  <FiBookmark size={14} />
+                  Want to read
                 </Button>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleAddToShelf('Currently Reading')}
-                  >
+                <div className="grid grid-cols-2 gap-2.5">
+                  <Button variant="outline" onClick={() => handleAddToShelf('Currently Reading')}>
                     Reading
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleAddToShelf('Read')}
-                  >
+                  <Button variant="outline" onClick={() => handleAddToShelf('Read')}>
                     Read
                   </Button>
                 </div>
-
-                <Button variant="ghost" className="w-full" onClick={handleShare} aria-label="Copy link to this book">
-                  <FiShare2 className="inline mr-2" />
-                  Share
-                </Button>
+                <button
+                  onClick={handleShare}
+                  className="label inline-flex w-full items-center justify-center gap-2 border border-transparent py-2 transition-colors hover:border-rule hover:text-ink"
+                >
+                  <FiShare2 size={13} />
+                  Copy link
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-2">
-            <h1 className="text-4xl font-serif font-bold text-navy-900 mb-2">{book.title}</h1>
-            <h2 className="text-xl text-navy-500 mb-4">by {book.author}</h2>
+          <div>
+            <p className="label">{book.genre.join(' · ')}</p>
+            <h1 className="display mt-4 text-[clamp(2.25rem,4.5vw,3.5rem)] text-ink">{book.title}</h1>
+            <p className="mt-3 text-[15px] text-ink-2">
+              {book.author} · {book.publishYear}
+            </p>
 
-            <div className="flex items-center gap-4 mb-6">
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
               <Rating rating={book.rating} size="lg" />
-              <span className="text-navy-500">
+              <span className="label tnum">
                 {book.ratingsCount.toLocaleString()} ratings · {book.reviewsCount} reviews
               </span>
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-6">
-              {book.genre.map((genre, index) => (
-                <Badge key={index} variant="primary" size="md">
-                  {genre}
-                </Badge>
+            <dl className="mt-10 grid grid-cols-2 border-t border-rule md:grid-cols-4">
+              {meta.map((item) => (
+                <div
+                  key={item.label}
+                  className="border-b border-rule py-4 pr-4 md:border-b-0 md:border-r md:last:border-r-0"
+                >
+                  <dt className="label">{item.label}</dt>
+                  <dd className="tnum mt-1.5 text-[15px] text-ink">{item.value}</dd>
+                </div>
               ))}
+            </dl>
+
+            <div className="mt-12">
+              <h2 className="font-display text-2xl text-ink">The entry</h2>
+              <p className="mt-4 max-w-[66ch] text-[15.5px] leading-relaxed text-ink-2">
+                {book.description}
+              </p>
             </div>
 
-            <div className="bg-cream-100 rounded-lg p-6 mb-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Pages</p>
-                  <p className="font-semibold text-navy-900">{book.pages}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Published</p>
-                  <p className="font-semibold text-navy-900">{book.publishYear}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">Language</p>
-                  <p className="font-semibold text-navy-900">{book.language}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-navy-500 mb-1">ISBN</p>
-                  <p className="font-semibold text-navy-900 text-xs">{book.isbn}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="text-xl font-serif font-bold text-navy-900 mb-4">About this book</h3>
-              <p className="text-navy-700 leading-relaxed">{book.description}</p>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="text-xl font-serif font-bold text-navy-900 mb-4">Rating Distribution</h3>
-              <div className="space-y-2">
-                {ratingDistribution.map((item) => (
-                  <div key={item.stars} className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-navy-700 w-16">
-                      {item.stars} stars
+            <div className="mt-12">
+              <h2 className="font-display text-2xl text-ink">How readers rated it</h2>
+              <div className="mt-5 max-w-lg space-y-2.5">
+                {distribution.map((row) => (
+                  <div key={row.stars} className="flex items-center gap-4">
+                    <span className="label tnum w-10 shrink-0 text-ink-2">{row.stars}★</span>
+                    <span className="h-[5px] flex-1 bg-rule">
+                      <span
+                        className="block h-full bg-ink"
+                        style={{ width: `${row.percentage}%` }}
+                      />
                     </span>
-                    <div className="flex-1 bg-cream-200 rounded-full h-2.5">
-                      <div
-                        className="bg-amber-500 h-2.5 rounded-full transition-all"
-                        style={{ width: `${item.percentage}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm text-navy-500 w-20 text-right">
-                      {item.count} ({item.percentage}%)
+                    <span className="tnum w-24 shrink-0 text-right text-[12px] text-ink-3">
+                      {row.count.toLocaleString()} · {row.percentage}%
                     </span>
                   </div>
                 ))}
@@ -211,78 +200,85 @@ const BookDetailPage = () => {
             </div>
           </div>
         </div>
-
-        {relatedBooks.length > 0 && (
-          <div className="mb-12">
-            <h3 className="text-xl font-serif font-bold text-navy-900 mb-6">Readers Also Enjoyed</h3>
-            <BookGrid books={relatedBooks} />
-          </div>
-        )}
-
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-serif font-bold text-navy-900">
-              Reviews ({reviews.length})
-            </h3>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-cream-200 p-6 mb-6">
-            {user ? (
-              <form onSubmit={handleSubmitReview}>
-                <h4 className="font-semibold text-navy-900 mb-3">
-                  Share your take, {user.name.split(' ')[0]}
-                </h4>
-                <div className="mb-3">
-                  <span className="block text-sm font-medium text-navy-900 mb-1.5">
-                    Your rating
-                  </span>
-                  <Rating
-                    rating={myRating}
-                    size="lg"
-                    showNumber={false}
-                    interactive
-                    onRate={setMyRating}
-                  />
-                </div>
-                <label htmlFor="review-text" className="block text-sm font-medium text-navy-900 mb-1.5">
-                  Your review
-                </label>
-                <textarea
-                  id="review-text"
-                  value={myText}
-                  onChange={(e) => setMyText(e.target.value)}
-                  rows={4}
-                  placeholder="What did you love? What fell flat? No spoilers, please."
-                  className="w-full px-4 py-2.5 bg-cream-50 border border-cream-200 rounded-lg text-sm text-navy-900 placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-500 mb-3"
-                />
-                <Button type="submit" variant="primary">
-                  Publish review
-                </Button>
-              </form>
-            ) : (
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-                <p className="text-navy-700">Sign in to write a review and build your library.</p>
-                <Button variant="primary" onClick={() => navigate('/signin')}>
-                  Sign in
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            {reviews.length > 0 ? (
-              reviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
-              ))
-            ) : (
-              <div className="text-center py-12 bg-cream-100 rounded-lg">
-                <FiBook className="mx-auto text-4xl text-navy-400 mb-3" />
-                <p className="text-navy-600">No reviews yet. Be the first to review!</p>
-              </div>
-            )}
-          </div>
-        </div>
       </PageContainer>
+
+      {related.length > 0 && (
+        <section className="border-t border-rule">
+          <PageContainer>
+            <div className="mb-9 border-b border-rule pb-4">
+              <h2 className="font-display text-[26px] text-ink">Readers also finished</h2>
+            </div>
+            <BookGrid books={related.slice(0, 5)} />
+          </PageContainer>
+        </section>
+      )}
+
+      <section className="border-t border-rule">
+        <PageContainer>
+          <div className="grid gap-12 md:grid-cols-[minmax(0,320px)_1fr] md:gap-16 lg:gap-24">
+            <div>
+              <h2 className="font-display text-[26px] text-ink">Reviews</h2>
+              <p className="label mt-2 tnum">{reviews.length} on file</p>
+
+              <div className="mt-6 border border-rule bg-raised p-5">
+                {user ? (
+                  <form onSubmit={submitReview}>
+                    <h3 className="font-display text-lg text-ink">
+                      Add yours, {user.name.split(' ')[0]}
+                    </h3>
+                    <div className="mt-4">
+                      <span className="label block">Your rating</span>
+                      <div className="mt-2">
+                        <Rating
+                          rating={myRating}
+                          size="md"
+                          showNumber={false}
+                          interactive
+                          onRate={setMyRating}
+                        />
+                      </div>
+                    </div>
+                    <label htmlFor="review-text" className="label mt-5 block">
+                      Your review
+                    </label>
+                    <textarea
+                      id="review-text"
+                      rows={4}
+                      value={myText}
+                      onChange={(e) => setMyText(e.target.value)}
+                      placeholder="What held up, what didn't. No spoilers."
+                      className="field mt-2 resize-y"
+                    />
+                    <Button type="submit" className="mt-5 w-full">
+                      Publish review
+                    </Button>
+                  </form>
+                ) : (
+                  <div>
+                    <p className="text-[14px] leading-relaxed text-ink-2">
+                      Sign in to leave a review and start your shelf.
+                    </p>
+                    <Button className="mt-4 w-full" onClick={() => navigate('/signin')}>
+                      Sign in
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="stagger">
+              {reviews.length > 0 ? (
+                reviews.map((review) => <ReviewCard key={review.id} review={review} />)
+              ) : (
+                <div className="border-t border-rule pt-6">
+                  <p className="font-display text-xl text-ink">No reviews yet.</p>
+                  <p className="mt-2 text-sm text-ink-2">Be the first to put something on record.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </PageContainer>
+      </section>
     </div>
   );
 };

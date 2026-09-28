@@ -1,50 +1,65 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
 import { mockBooks } from '../data/mockBooks';
-import { FiSearch } from 'react-icons/fi';
 
 const SearchResultsPage = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const [params] = useSearchParams();
+  const query = params.get('q') ?? '';
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (query) {
-      const searchResults = mockBooks.filter(book =>
-        book.title.toLowerCase().includes(query.toLowerCase()) ||
-        book.author.toLowerCase().includes(query.toLowerCase()) ||
-        book.genre.some(g => g.toLowerCase().includes(query.toLowerCase()))
+    const term = query.trim().toLowerCase();
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setResults(
+        term
+          ? mockBooks.filter(
+              (book) =>
+                book.title.toLowerCase().includes(term) ||
+                book.author.toLowerCase().includes(term) ||
+                book.genre.some((genre) => genre.toLowerCase().includes(term))
+            )
+          : []
       );
-      setResults(searchResults);
-    }
+      setLoading(false);
+    }, 260);
+    return () => clearTimeout(timer);
   }, [query]);
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <FiSearch className="text-2xl text-navy-400" />
-          <h1 className="text-3xl font-serif font-bold text-navy-900">
-            Search Results
-          </h1>
-        </div>
-        <p className="text-navy-600">
-          {results.length} {results.length === 1 ? 'result' : 'results'} for "{query}"
-        </p>
-      </div>
+      <header className="mb-10">
+        <p className="label">Search</p>
+        <h1 className="display mt-4 text-[clamp(2rem,4.5vw,3rem)] text-ink">
+          {query ? `“${query}”` : 'Type something'}
+        </h1>
+        {!loading && (
+          <p className="label tnum mt-3">
+            {results.length} {results.length === 1 ? 'match' : 'matches'}
+          </p>
+        )}
+      </header>
 
       {results.length > 0 ? (
-        <BookGrid books={results} />
+        <BookGrid books={results} loading={loading} count={6} />
       ) : (
-        <div className="text-center py-16 bg-cream-100 rounded-lg">
-          <FiSearch className="mx-auto text-5xl text-navy-300 mb-4" />
-          <h3 className="text-xl font-serif font-semibold text-navy-900 mb-2">No results found</h3>
-          <p className="text-navy-600">
-            Try searching with different keywords or browse our collection
-          </p>
-        </div>
+        !loading && (
+          <div className="border border-rule px-6 py-16 text-center">
+            <p className="font-display text-xl text-ink">No match for “{query}”.</p>
+            <p className="mt-2 text-sm text-ink-2">
+              Try an author, a genre, or part of a title.
+            </p>
+            <Link
+              to="/explore"
+              className="label mt-6 inline-block transition-colors hover:text-accent"
+            >
+              Browse everything instead →
+            </Link>
+          </div>
+        )
       )}
     </PageContainer>
   );

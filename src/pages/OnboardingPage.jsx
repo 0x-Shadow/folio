@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PageContainer from '../components/layout/PageContainer';
 import Button from '../components/common/Button';
-import { useAuth } from '../hooks/useAuth';
 import { GENRES } from '../data/genres';
 import { mockBooks } from '../data/mockBooks';
 import { addToShelf } from '../lib/library';
+import { useAuth } from '../hooks/useAuth';
+
+const MINIMUM = 3;
 
 const OnboardingPage = () => {
   const [selected, setSelected] = useState([]);
@@ -22,63 +24,64 @@ const OnboardingPage = () => {
   };
 
   const finish = () => {
-    if (selected.length < 3) {
-      toast.error('Pick at least 3 genres so we can seed your shelves.');
+    if (selected.length < MINIMUM) {
+      toast.error(`Pick at least ${MINIMUM} genres so we can stock your shelf.`);
       return;
     }
-    const added = new Set();
+
+    const taken = new Set();
     selected.forEach((genre) => {
       const pick = [...mockBooks]
         .sort((a, b) => b.rating - a.rating)
-        .find((book) => book.genre.includes(genre) && !added.has(book.id));
+        .find((book) => book.genre.includes(genre) && !taken.has(book.id));
       if (pick) {
-        added.add(pick.id);
+        taken.add(pick.id);
         addToShelf(user.id, pick.id, 'want-to-read');
       }
     });
-    toast.success('Your library is seeded. Happy reading!');
+
+    toast.success('Your shelf is stocked.');
     navigate('/my-books');
   };
 
   return (
     <PageContainer>
-      <div className="max-w-2xl mx-auto py-12">
-        <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2 text-center">
-          What do you love to read, {user.name.split(' ')[0]}?
-        </h1>
-        <p className="text-navy-600 text-center mb-8">
-          Pick at least 3 genres and we will stock your Want to Read shelf with top-rated picks.
-        </p>
+      <div className="mx-auto max-w-2xl">
+        <header>
+          <p className="label">Step one of one</p>
+          <h1 className="display mt-4 text-[clamp(2rem,5vw,3rem)] text-ink">
+            What do you like reading, {user.name.split(' ')[0]}?
+          </h1>
+          <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-ink-2">
+            Pick at least {MINIMUM} genres. We'll put the highest-rated title from each one on your
+            Want to read shelf — you can clear it out later.
+          </p>
+        </header>
 
-        <div className="bg-white rounded-lg shadow-sm border border-cream-200 p-6 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {GENRES.map((genre) => (
-              <button
-                key={genre}
-                onClick={() => toggle(genre)}
-                aria-pressed={selected.includes(genre)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                  selected.includes(genre)
-                    ? 'bg-navy-800 text-white'
-                    : 'bg-cream-100 text-navy-700 hover:bg-cream-200'
-                }`}
-              >
-                {genre}
-              </button>
-            ))}
-          </div>
+        <div className="mt-10 flex flex-wrap gap-2.5 border-y border-rule py-8">
+          {GENRES.map((genre) => (
+            <button
+              key={genre}
+              onClick={() => toggle(genre)}
+              aria-pressed={selected.includes(genre)}
+              className="chip"
+            >
+              {selected.includes(genre) && <span aria-hidden="true">✓</span>}
+              {genre}
+            </button>
+          ))}
         </div>
 
-        <div className="flex items-center justify-between">
-          <Link
-            to="/"
-            className="text-sm font-medium text-navy-600 hover:text-navy-900 transition"
-          >
-            Skip for now
-          </Link>
-          <Button variant="primary" onClick={finish}>
-            Build my library ({selected.length})
-          </Button>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+          <p className="label tnum">
+            {selected.length} selected {selected.length < MINIMUM && `· ${MINIMUM - selected.length} more`}
+          </p>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="label transition-colors hover:text-ink">
+              Skip
+            </Link>
+            <Button onClick={finish}>Build my shelf</Button>
+          </div>
         </div>
       </div>
     </PageContainer>

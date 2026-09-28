@@ -1,24 +1,37 @@
 import BookCard from './BookCard';
 
-const BookGrid = ({ books, loading = false }) => {
+const Placeholder = () => (
+  <div>
+    <div className="placeholder-block aspect-[2/3] w-full" />
+    <div className="mt-4 space-y-2">
+      <div className="placeholder-block h-3.5 w-4/5" />
+      <div className="placeholder-block h-3 w-1/3" />
+    </div>
+  </div>
+);
+
+const BookGrid = ({ books, loading = false, count }) => {
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-navy-600">Loading books...</p>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {Array.from({ length: count ?? 10 }, (_, i) => (
+          <Placeholder key={i} />
+        ))}
       </div>
     );
   }
 
   if (!books || books.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-navy-600">No books found</p>
+      <div className="border border-rule px-6 py-16 text-center">
+        <p className="font-display text-xl text-ink">Nothing here yet.</p>
+        <p className="mt-2 text-sm text-ink-2">Try a different filter or search term.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="stagger grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {books.map((book) => (
         <BookCard key={book.id} book={book} />
       ))}

@@ -1,14 +1,14 @@
-const Card = ({ children, className = '', hover = false, onClick }) => {
-    const hoverEffect = hover ? 'hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer' : '';
+// A ruled box — used for panels that genuinely need an edge (filters, forms).
+// Most surfaces in Folio are separated by hairlines instead.
+const Card = ({ children, className = '', hover = false, onClick }) => (
+  <div
+    onClick={onClick}
+    className={`border border-rule bg-raised p-6 ${
+      hover ? 'transition-colors duration-200 hover:border-rule-strong' : ''
+    } ${className}`}
+  >
+    {children}
+  </div>
+);
 
-    return (
-      <div
-        className={`bg-white rounded-lg shadow-sm border border-cream-200 overflow-hidden ${hoverEffect} ${className}`}
-        onClick={onClick}
-      >
-        {children}
-      </div>
-    );
-  };
-
-  export default Card;
+export default Card;

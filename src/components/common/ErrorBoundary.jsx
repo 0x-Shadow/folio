@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-// Catches render crashes anywhere below it so one broken
-// component never takes down the whole app.
+// Catches render crashes anywhere below it so one broken component
+// never takes down the whole app.
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -16,22 +16,20 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-3">
-            Something went wrong
-          </h1>
-          <p className="text-navy-600 mb-8">
-            This page hit a snag. Try going back home.
-          </p>
+        <div className="mx-auto max-w-lg border border-rule px-6 py-20 text-center">
+          <p className="label">Something broke</p>
+          <h1 className="display mt-4 text-3xl text-ink">This page fell over.</h1>
+          <p className="mt-3 text-[15px] text-ink-2">The rest of the catalogue is fine.</p>
           <Link
             to="/"
-            className="inline-block bg-navy-800 text-white px-6 py-3 rounded-lg font-medium hover:bg-navy-900 transition"
+            className="mt-8 inline-block bg-ink px-5 py-2.5 text-sm font-medium text-paper transition-colors hover:bg-accent"
           >
-            Back to home
+            Back to the front
           </Link>
         </div>
       );
     }
+
     return this.props.children;
   }
 }

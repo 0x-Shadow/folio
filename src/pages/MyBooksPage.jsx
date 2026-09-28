@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiBook, FiBookOpen, FiClock, FiStar, FiTarget, FiMinus, FiPlus } from 'react-icons/fi';
+import { FiTarget, FiMinus, FiPlus, FiArrowRight } from 'react-icons/fi';
 import PageContainer from '../components/layout/PageContainer';
-import BookCard from '../components/books/BookCard';
+import BookGrid from '../components/books/BookGrid';
 import Button from '../components/common/Button';
 import { mockBooks } from '../data/mockBooks';
 import { bookshelfTypes } from '../data/mockBookshelves';
@@ -11,21 +11,23 @@ import { getReviewsByUser } from '../lib/reviewStore';
 import { useAuth } from '../hooks/useAuth';
 
 const MyBooksPage = () => {
-  const [activeShelf, setActiveShelf] = useState('all');
   const { user } = useAuth();
+  const [activeShelf, setActiveShelf] = useState('all');
+  // Goals live in localStorage, so nudge a render after each write.
   const [goalTick, setGoalTick] = useState(0);
 
   if (!user) {
     return (
       <PageContainer>
-        <div className="max-w-md mx-auto py-16 text-center">
-          <FiBook className="mx-auto text-5xl text-navy-300 mb-4" />
-          <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">Your library awaits</h1>
-          <p className="text-navy-600 mb-8">
-            Sign in to track your shelves, set reading goals, and get recommendations.
+        <div className="mx-auto max-w-lg border border-rule px-6 py-16 text-center">
+          <p className="label">Your shelf is empty</p>
+          <h1 className="display mt-4 text-3xl text-ink">Sign in to start one.</h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-ink-2">
+            Track what you're reading, set a goal for the year, and keep your reviews in one
+            place. Everything stays on this device.
           </p>
-          <Link to="/signin">
-            <Button variant="primary">Sign in</Button>
+          <Link to="/signin" className="mt-8 inline-block">
+            <Button>Sign in</Button>
           </Link>
         </div>
       </PageContainer>
@@ -33,149 +35,163 @@ const MyBooksPage = () => {
   }
 
   const shelves = getShelves(user.id);
-  const onShelf = (type) => shelves.filter((b) => b.shelf === type);
+  const onShelf = (type) => shelves.filter((entry) => entry.shelf === type);
   const readBooks = onShelf(bookshelfTypes.READ);
   const readingBooks = onShelf(bookshelfTypes.READING);
   const wantBooks = onShelf(bookshelfTypes.WANT_TO_READ);
 
-  const shelfTypes = [
-    { id: 'all', name: 'All Books', count: shelves.length },
+  const tabs = [
+    { id: 'all', name: 'All', count: shelves.length },
     { id: bookshelfTypes.READ, name: 'Read', count: readBooks.length },
-    { id: bookshelfTypes.READING, name: 'Currently Reading', count: readingBooks.length },
-    { id: bookshelfTypes.WANT_TO_READ, name: 'Want to Read', count: wantBooks.length },
+    { id: bookshelfTypes.READING, name: 'Reading', count: readingBooks.length },
+    { id: bookshelfTypes.WANT_TO_READ, name: 'Want to read', count: wantBooks.length },
   ];
 
-  const filtered = (activeShelf === 'all' ? shelves : onShelf(activeShelf)).map((entry) => {
-    const book = mockBooks.find((b) => b.id === entry.bookId);
-    return { ...book, shelfInfo: entry };
-  });
+  const visible = (activeShelf === 'all' ? shelves : onShelf(activeShelf))
+    .map((entry) => {
+      const book = mockBooks.find((b) => b.id === entry.bookId);
+      return book ? { ...book, shelfInfo: entry } : null;
+    })
+    .filter(Boolean);
 
   const pagesRead = readBooks.reduce((sum, entry) => {
     const book = mockBooks.find((b) => b.id === entry.bookId);
     return sum + (book?.pages ?? 0);
   }, 0);
-  const myReviews = getReviewsByUser(user.id);
 
-  const stats = [
-    { icon: FiBook, label: 'Books read', value: readBooks.length },
-    { icon: FiBookOpen, label: 'Pages read', value: pagesRead.toLocaleString() },
-    { icon: FiClock, label: 'Currently reading', value: readingBooks.length },
-    { icon: FiStar, label: 'Reviews written', value: myReviews.length },
-  ];
-
+  const reviewsWritten = getReviewsByUser(user.id).length;
   const goal = getGoal(user.id);
   const progress = Math.min(100, Math.round((readBooks.length / Math.max(goal, 1)) * 100));
 
   const adjustGoal = (delta) => {
     setGoal(user.id, Math.min(100, Math.max(1, goal + delta)));
-    setGoalTick((t) => t + 1);
+    setGoalTick((tick) => tick + 1);
   };
   void goalTick;
 
+  const stats = [
+    { value: readBooks.length, label: 'Books read' },
+    { value: pagesRead.toLocaleString(), label: 'Pages' },
+    { value: readingBooks.length, label: 'Reading now' },
+    { value: reviewsWritten, label: 'Reviews' },
+  ];
+
   return (
     <PageContainer>
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">
-          {user.name.split(' ')[0]}&rsquo;s Library
-        </h1>
-        <p className="text-navy-600">Organize and track your reading journey</p>
-      </div>
+      <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="label">Your shelf</p>
+          <h1 className="display mt-4 text-[clamp(2.25rem,5vw,3.5rem)] text-ink">
+            {user.name.split(' ')[0]}&rsquo;s library
+          </h1>
+        </div>
+        <Link
+          to="/explore"
+          className="label inline-flex items-center gap-2 border border-rule px-4 py-2.5 transition-colors hover:border-accent hover:text-accent"
+        >
+          Find something new
+          <FiArrowRight size={13} />
+        </Link>
+      </header>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {/* Reading figures, set like a table row. */}
+      <dl className="grid grid-cols-2 border-y border-rule md:grid-cols-4">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm border border-cream-200 p-5 text-center">
-            <stat.icon className="mx-auto text-xl text-amber-500 mb-2" />
-            <p className="text-2xl font-bold text-navy-900 mb-1">{stat.value}</p>
-            <p className="text-sm text-navy-500">{stat.label}</p>
+          <div
+            key={stat.label}
+            className={`py-6 pr-4 ${index % 2 === 1 ? 'border-l border-rule pl-4' : ''} ${
+              index > 1 ? 'border-t border-rule md:border-t-0' : ''
+            } ${index === 2 ? 'md:border-l md:border-rule md:pl-4' : ''} ${
+              index === 3 ? 'md:border-l md:border-rule md:pl-4' : ''
+            }`}
+          >
+            <dt className="label">{stat.label}</dt>
+            <dd className="tnum font-display mt-2 text-3xl text-ink">{stat.value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      <div className="bg-navy-900 rounded-lg p-6 mb-8 text-white">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
-          <div className="flex items-center gap-3">
-            <FiTarget className="text-amber-400 text-2xl" />
+      {/* The goal, as an inset panel. */}
+      <section className="mt-10 border border-rule bg-raised p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <FiTarget className="mt-1 text-accent" size={20} />
             <div>
-              <p className="font-semibold">Yearly reading goal</p>
-              <p className="text-sm text-navy-200">
+              <h2 className="font-display text-2xl text-ink">This year&rsquo;s goal</h2>
+              <p className="tnum mt-1.5 text-sm text-ink-2">
                 {readBooks.length} of {goal} books · {progress}%
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-4">
             <button
               onClick={() => adjustGoal(-1)}
-              className="w-9 h-9 rounded-lg bg-navy-700 hover:bg-navy-600 flex items-center justify-center transition"
-              aria-label="Decrease yearly goal"
+              className="grid h-9 w-9 place-items-center border border-rule text-ink-2 transition-colors hover:border-accent hover:text-accent"
+              aria-label="Lower the goal by one book"
             >
-              <FiMinus />
+              <FiMinus size={14} />
             </button>
-            <span className="w-12 text-center font-bold text-lg">{goal}</span>
+            <span className="tnum w-10 text-center font-display text-2xl text-ink">{goal}</span>
             <button
               onClick={() => adjustGoal(1)}
-              className="w-9 h-9 rounded-lg bg-navy-700 hover:bg-navy-600 flex items-center justify-center transition"
-              aria-label="Increase yearly goal"
+              className="grid h-9 w-9 place-items-center border border-rule text-ink-2 transition-colors hover:border-accent hover:text-accent"
+              aria-label="Raise the goal by one book"
             >
-              <FiPlus />
+              <FiPlus size={14} />
             </button>
           </div>
         </div>
-        <div className="mt-4 bg-navy-700 rounded-full h-2.5">
+
+        <div className="mt-7 h-[3px] w-full bg-rule">
           <div
-            className="bg-amber-400 h-2.5 rounded-full transition-all"
+            className="h-full bg-accent transition-[width] duration-700 ease-out"
             style={{ width: `${progress}%` }}
-          ></div>
+          />
         </div>
-      </div>
+      </section>
 
-      <div className="mb-8 border-b border-cream-200">
-        <div className="flex gap-1 overflow-x-auto">
-          {shelfTypes.map((shelf) => (
+      {/* Shelves, as a table of contents. */}
+      <div className="mt-12 flex flex-wrap gap-x-8 gap-y-1 border-b border-rule">
+        {tabs.map((tab) => {
+          const active = activeShelf === tab.id;
+          return (
             <button
-              key={shelf.id}
-              onClick={() => setActiveShelf(shelf.id)}
-              className={`px-5 py-3 font-medium whitespace-nowrap transition text-sm ${
-                activeShelf === shelf.id
-                  ? 'border-b-2 border-navy-800 text-navy-800'
-                  : 'text-navy-500 hover:text-navy-900'
-              }`}
+              key={tab.id}
+              onClick={() => setActiveShelf(tab.id)}
+              className="group relative -mb-px flex items-center gap-2 pb-3"
+              aria-current={active ? 'true' : undefined}
             >
-              {shelf.name}
-              <span className="ml-2 text-xs bg-cream-200 text-navy-600 px-2 py-0.5 rounded-full">
-                {shelf.count}
+              <span className={`label transition-colors ${active ? 'text-accent' : 'group-hover:text-ink'}`}>
+                {tab.name}
               </span>
+              <span className="tnum text-[11px] text-ink-3">{tab.count}</span>
+              <span
+                className={`absolute -bottom-px left-0 h-[2px] w-full origin-left bg-accent transition-transform duration-300 ${
+                  active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                }`}
+                aria-hidden="true"
+              />
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filtered.map((book) => (
-            <div key={book.id} className="relative">
-              <BookCard book={book} />
-              {book.shelfInfo?.progress && (
-                <div className="absolute bottom-2 left-2 right-2 bg-white rounded-lg p-3 shadow-md border border-cream-200">
-                  <div className="flex justify-between text-xs text-navy-600 mb-1.5">
-                    <span>Progress</span>
-                    <span className="font-medium">{book.shelfInfo.progress}%</span>
-                  </div>
-                  <div className="w-full bg-cream-200 rounded-full h-2">
-                    <div
-                      className="bg-navy-700 h-2 rounded-full transition-all"
-                      style={{ width: `${book.shelfInfo.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-16 bg-cream-100 rounded-lg">
-          <p className="text-navy-600">No books in this shelf yet.</p>
-        </div>
-      )}
+      <div className="mt-10">
+        {visible.length > 0 ? (
+          <BookGrid books={visible} count={8} />
+        ) : (
+          <div className="border border-rule px-6 py-16 text-center">
+            <p className="font-display text-xl text-ink">This shelf is empty.</p>
+            <Link
+              to="/explore"
+              className="label mt-4 inline-block transition-colors hover:text-accent"
+            >
+              Find something to read →
+            </Link>
+          </div>
+        )}
+      </div>
     </PageContainer>
   );
 };

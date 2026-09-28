@@ -1,97 +1,104 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import BookGrid from '../components/books/BookGrid';
 import FilterPanel from '../components/books/FilterPanel';
 import { mockBooks } from '../data/mockBooks';
-import { FiFilter, FiX } from 'react-icons/fi';
+import { FiSliders, FiX } from 'react-icons/fi';
 
 const ExplorePage = () => {
-  const [filteredBooks, setFilteredBooks] = useState(mockBooks);
   const [filters, setFilters] = useState({ genres: [], rating: null, sortBy: 'rating' });
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    let books = [...mockBooks];
+    let result = [...mockBooks];
 
     if (filters.genres.length > 0) {
-      books = books.filter(book =>
-        book.genre.some(g => filters.genres.includes(g))
-      );
+      result = result.filter((book) => book.genre.some((genre) => filters.genres.includes(genre)));
     }
-
     if (filters.rating) {
-      books = books.filter(book => book.rating >= filters.rating);
+      result = result.filter((book) => book.rating >= filters.rating);
     }
 
-    switch (filters.sortBy) {
-      case 'rating':
-        books.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'reviews':
-        books.sort((a, b) => b.reviewsCount - a.reviewsCount);
-        break;
-      case 'title':
-        books.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'recent':
-        books.sort((a, b) => b.publishYear - a.publishYear);
-        break;
-      default:
-        break;
-    }
+    const sorters = {
+      rating: (a, b) => b.rating - a.rating,
+      reviews: (a, b) => b.reviewsCount - a.reviewsCount,
+      title: (a, b) => a.title.localeCompare(b.title),
+      recent: (a, b) => b.publishYear - a.publishYear,
+    };
+    result.sort(sorters[filters.sortBy] ?? sorters.rating);
 
-    setFilteredBooks(books);
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setBooks(result);
+      setLoading(false);
+    }, 260);
+
+    return () => clearTimeout(timer);
   }, [filters]);
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">Explore Books</h1>
-        <p className="text-navy-600">Discover your next favorite read from our collection</p>
-      </div>
+      <header className="mb-10">
+        <p className="label">The catalogue</p>
+        <h1 className="display mt-4 text-[clamp(2.25rem,5vw,3.5rem)] text-ink">Every title</h1>
+      </header>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-          <FilterPanel onFilterChange={handleFilterChange} />
+      <div className="flex gap-10 lg:gap-14">
+        <aside className="hidden w-64 shrink-0 lg:block">
+          <div className="sticky top-24">
+            <FilterPanel onFilterChange={setFilters} />
+          </div>
         </aside>
 
-        <button
-          onClick={() => setShowMobileFilters(!showMobileFilters)}
-          className="lg:hidden flex items-center justify-center gap-2 bg-navy-800 text-white px-4 py-2.5 rounded-lg font-medium mb-4"
-        >
-          <FiFilter />
-          Filters
-        </button>
-
-        {showMobileFilters && (
-          <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-            <div className="bg-white h-full w-80 p-6 overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-navy-900">Filters</h3>
-                <button
-                  onClick={() => setShowMobileFilters(false)}
-                  className="text-navy-600 hover:text-navy-900"
-                  aria-label="Close filters"
-                >
-                  <FiX className="text-xl" />
-                </button>
-              </div>
-              <FilterPanel onFilterChange={handleFilterChange} />
-            </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-6 flex items-center justify-between gap-4 border-b border-rule pb-4">
+            <p className="label tnum">
+              {loading ? '—' : `${books.length} ${books.length === 1 ? 'title' : 'titles'}`}
+            </p>
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="label inline-flex items-center gap-2 border border-rule px-3 py-2 transition-colors hover:border-accent hover:text-accent lg:hidden"
+            >
+              <FiSliders size={13} />
+              Refine
+            </button>
           </div>
-        )}
 
-        <div className="flex-1">
-          <div className="mb-4 text-sm text-navy-500">
-            Showing {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'}
-          </div>
-          <BookGrid books={filteredBooks} />
+          <BookGrid books={books} loading={loading} count={10} />
         </div>
       </div>
+
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+          <button
+            className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close filters"
+          />
+          <div className="relative flex h-full w-[85vw] max-w-sm flex-col border-l border-rule bg-paper">
+            <div className="flex items-center justify-between border-b border-rule px-5 py-4">
+              <h2 className="font-display text-lg text-ink">Refine</h2>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="grid h-8 w-8 place-items-center border border-rule text-ink-2"
+                aria-label="Close filters"
+              >
+                <FiX size={14} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-5">
+              <FilterPanel
+                onFilterChange={(next) => {
+                  setFilters(next);
+                  setDrawerOpen(false);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </PageContainer>
   );
 };
